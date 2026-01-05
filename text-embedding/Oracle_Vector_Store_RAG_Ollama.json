@@ -151,91 +151,6 @@
         "className": "",
         "data": {
           "sourceHandle": {
-            "dataType": "ChatInput",
-            "id": "ChatInput-EBE8r",
-            "name": "message",
-            "output_types": [
-              "Message"
-            ]
-          },
-          "targetHandle": {
-            "fieldName": "search_query",
-            "id": "CustomComponent-Crmai",
-            "inputTypes": [
-              "Message"
-            ],
-            "type": "query"
-          }
-        },
-        "id": "xy-edge__ChatInput-EBE8r{œdataTypeœ:œChatInputœ,œidœ:œChatInput-EBE8rœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}-CustomComponent-Crmai{œfieldNameœ:œsearch_queryœ,œidœ:œCustomComponent-Crmaiœ,œinputTypesœ:[œMessageœ],œtypeœ:œqueryœ}",
-        "selected": false,
-        "source": "ChatInput-EBE8r",
-        "sourceHandle": "{œdataTypeœ:œChatInputœ,œidœ:œChatInput-EBE8rœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}",
-        "target": "CustomComponent-Crmai",
-        "targetHandle": "{œfieldNameœ:œsearch_queryœ,œidœ:œCustomComponent-Crmaiœ,œinputTypesœ:[œMessageœ],œtypeœ:œqueryœ}"
-      },
-      {
-        "animated": false,
-        "className": "",
-        "data": {
-          "sourceHandle": {
-            "dataType": "OllamaEmbeddings",
-            "id": "OllamaEmbeddings-3wUDq",
-            "name": "embeddings",
-            "output_types": [
-              "Embeddings"
-            ]
-          },
-          "targetHandle": {
-            "fieldName": "embedding",
-            "id": "CustomComponent-Crmai",
-            "inputTypes": [
-              "Embeddings"
-            ],
-            "type": "other"
-          }
-        },
-        "id": "xy-edge__OllamaEmbeddings-3wUDq{œdataTypeœ:œOllamaEmbeddingsœ,œidœ:œOllamaEmbeddings-3wUDqœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}-CustomComponent-Crmai{œfieldNameœ:œembeddingœ,œidœ:œCustomComponent-Crmaiœ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}",
-        "selected": false,
-        "source": "OllamaEmbeddings-3wUDq",
-        "sourceHandle": "{œdataTypeœ:œOllamaEmbeddingsœ,œidœ:œOllamaEmbeddings-3wUDqœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}",
-        "target": "CustomComponent-Crmai",
-        "targetHandle": "{œfieldNameœ:œembeddingœ,œidœ:œCustomComponent-Crmaiœ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}"
-      },
-      {
-        "animated": false,
-        "className": "",
-        "data": {
-          "sourceHandle": {
-            "dataType": "OracleDBVector",
-            "id": "CustomComponent-Crmai",
-            "name": "search_results",
-            "output_types": [
-              "Data"
-            ]
-          },
-          "targetHandle": {
-            "fieldName": "input_data",
-            "id": "parser-zsNdO",
-            "inputTypes": [
-              "DataFrame",
-              "Data"
-            ],
-            "type": "other"
-          }
-        },
-        "id": "xy-edge__CustomComponent-Crmai{œdataTypeœ:œOracleDBVectorœ,œidœ:œCustomComponent-Crmaiœ,œnameœ:œsearch_resultsœ,œoutput_typesœ:[œDataœ]}-parser-zsNdO{œfieldNameœ:œinput_dataœ,œidœ:œparser-zsNdOœ,œinputTypesœ:[œDataFrameœ,œDataœ],œtypeœ:œotherœ}",
-        "selected": false,
-        "source": "CustomComponent-Crmai",
-        "sourceHandle": "{œdataTypeœ:œOracleDBVectorœ,œidœ:œCustomComponent-Crmaiœ,œnameœ:œsearch_resultsœ,œoutput_typesœ:[œDataœ]}",
-        "target": "parser-zsNdO",
-        "targetHandle": "{œfieldNameœ:œinput_dataœ,œidœ:œparser-zsNdOœ,œinputTypesœ:[œDataFrameœ,œDataœ],œtypeœ:œotherœ}"
-      },
-      {
-        "animated": false,
-        "className": "",
-        "data": {
-          "sourceHandle": {
             "dataType": "Prompt",
             "id": "Prompt-QCIcc",
             "name": "prompt",
@@ -288,6 +203,91 @@
         "sourceHandle": "{œdataTypeœ:œOllamaModelœ,œidœ:œOllamaModel-A1wRjœ,œnameœ:œtext_outputœ,œoutput_typesœ:[œMessageœ]}",
         "target": "ChatOutput-D7MlS",
         "targetHandle": "{œfieldNameœ:œinput_valueœ,œidœ:œChatOutput-D7MlSœ,œinputTypesœ:[œDataœ,œDataFrameœ,œMessageœ],œtypeœ:œotherœ}"
+      },
+      {
+        "animated": false,
+        "className": "",
+        "data": {
+          "sourceHandle": {
+            "dataType": "ChatInput",
+            "id": "ChatInput-EBE8r",
+            "name": "message",
+            "output_types": [
+              "Message"
+            ]
+          },
+          "targetHandle": {
+            "fieldName": "search_query",
+            "id": "OracleDBVector-NJNY5",
+            "inputTypes": [
+              "Message"
+            ],
+            "type": "query"
+          }
+        },
+        "id": "xy-edge__ChatInput-EBE8r{œdataTypeœ:œChatInputœ,œidœ:œChatInput-EBE8rœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}-OracleDBVector-NJNY5{œfieldNameœ:œsearch_queryœ,œidœ:œOracleDBVector-NJNY5œ,œinputTypesœ:[œMessageœ],œtypeœ:œqueryœ}",
+        "selected": false,
+        "source": "ChatInput-EBE8r",
+        "sourceHandle": "{œdataTypeœ:œChatInputœ,œidœ:œChatInput-EBE8rœ,œnameœ:œmessageœ,œoutput_typesœ:[œMessageœ]}",
+        "target": "OracleDBVector-NJNY5",
+        "targetHandle": "{œfieldNameœ:œsearch_queryœ,œidœ:œOracleDBVector-NJNY5œ,œinputTypesœ:[œMessageœ],œtypeœ:œqueryœ}"
+      },
+      {
+        "animated": false,
+        "className": "",
+        "data": {
+          "sourceHandle": {
+            "dataType": "OllamaEmbeddings",
+            "id": "OllamaEmbeddings-3wUDq",
+            "name": "embeddings",
+            "output_types": [
+              "Embeddings"
+            ]
+          },
+          "targetHandle": {
+            "fieldName": "embedding",
+            "id": "OracleDBVector-NJNY5",
+            "inputTypes": [
+              "Embeddings"
+            ],
+            "type": "other"
+          }
+        },
+        "id": "xy-edge__OllamaEmbeddings-3wUDq{œdataTypeœ:œOllamaEmbeddingsœ,œidœ:œOllamaEmbeddings-3wUDqœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}-OracleDBVector-NJNY5{œfieldNameœ:œembeddingœ,œidœ:œOracleDBVector-NJNY5œ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}",
+        "selected": false,
+        "source": "OllamaEmbeddings-3wUDq",
+        "sourceHandle": "{œdataTypeœ:œOllamaEmbeddingsœ,œidœ:œOllamaEmbeddings-3wUDqœ,œnameœ:œembeddingsœ,œoutput_typesœ:[œEmbeddingsœ]}",
+        "target": "OracleDBVector-NJNY5",
+        "targetHandle": "{œfieldNameœ:œembeddingœ,œidœ:œOracleDBVector-NJNY5œ,œinputTypesœ:[œEmbeddingsœ],œtypeœ:œotherœ}"
+      },
+      {
+        "animated": false,
+        "className": "",
+        "data": {
+          "sourceHandle": {
+            "dataType": "OracleDBVector",
+            "id": "OracleDBVector-NJNY5",
+            "name": "search_results",
+            "output_types": [
+              "Data"
+            ]
+          },
+          "targetHandle": {
+            "fieldName": "input_data",
+            "id": "parser-zsNdO",
+            "inputTypes": [
+              "DataFrame",
+              "Data"
+            ],
+            "type": "other"
+          }
+        },
+        "id": "xy-edge__OracleDBVector-NJNY5{œdataTypeœ:œOracleDBVectorœ,œidœ:œOracleDBVector-NJNY5œ,œnameœ:œsearch_resultsœ,œoutput_typesœ:[œDataœ]}-parser-zsNdO{œfieldNameœ:œinput_dataœ,œidœ:œparser-zsNdOœ,œinputTypesœ:[œDataFrameœ,œDataœ],œtypeœ:œotherœ}",
+        "selected": false,
+        "source": "OracleDBVector-NJNY5",
+        "sourceHandle": "{œdataTypeœ:œOracleDBVectorœ,œidœ:œOracleDBVector-NJNY5œ,œnameœ:œsearch_resultsœ,œoutput_typesœ:[œDataœ]}",
+        "target": "parser-zsNdO",
+        "targetHandle": "{œfieldNameœ:œinput_dataœ,œidœ:œparser-zsNdOœ,œinputTypesœ:[œDataFrameœ,œDataœ],œtypeœ:œotherœ}"
       }
     ],
     "nodes": [
@@ -472,7 +472,7 @@
                 "trace_as_metadata": true,
                 "track_in_telemetry": false,
                 "type": "str",
-                "value": "DWC에 대해서 알려줘"
+                "value": "AAA에 대해서 알려줘"
               },
               "sender": {
                 "_input_type": "DropdownInput",
@@ -884,7 +884,7 @@
                 "trace_as_metadata": true,
                 "track_in_telemetry": true,
                 "type": "int",
-                "value": 500
+                "value": 1000
               },
               "code": {
                 "advanced": true,
@@ -1410,7 +1410,7 @@
           "x": 2734.385670401691,
           "y": 810.6079786425926
         },
-        "selected": false,
+        "selected": true,
         "type": "genericNode",
         "width": 320
       },
@@ -1488,7 +1488,7 @@
             ],
             "frozen": false,
             "icon": "file-text",
-            "last_updated": "2026-01-03T10:12:05.896Z",
+            "last_updated": "2026-01-05T01:43:43.323Z",
             "legacy": false,
             "lf_version": "1.7.1",
             "metadata": {
@@ -1553,6 +1553,12 @@
             ],
             "pinned": false,
             "template": {
+              "_frontend_node_flow_id": {
+                "value": "975671cf-ee7b-4f67-967b-c88fcf9ac9d5"
+              },
+              "_frontend_node_folder_id": {
+                "value": "d22141c8-002d-4a1a-a8d4-e0cba0f83729"
+              },
               "_type": "Component",
               "advanced_mode": {
                 "_input_type": "BoolInput",
@@ -1743,6 +1749,7 @@
                 "type": "bool",
                 "value": true
               },
+              "is_refresh": false,
               "markdown": {
                 "_input_type": "BoolInput",
                 "advanced": false,
@@ -1884,7 +1891,7 @@
                   "gz"
                 ],
                 "file_path": [
-                  "6ab63a55-fb2c-4497-9312-0cda331547af/atomic_txt.txt"
+                  "6ab63a55-fb2c-4497-9312-0cda331547af/aviate_final.txt"
                 ],
                 "info": "Supported file extensions: csv, json, pdf, txt, md, mdx, yaml, yml, xml, html, htm, docx, py, sh, sql, js, ts, tsx, adoc, asciidoc, asc, bmp, dotx, dotm, docm, jpg, jpeg, png, potx, ppsx, pptm, potm, ppsm, pptx, tiff, xls, xlsx, xhtml, webp; optionally bundled in file extensions: zip, tar, tgz, bz2, gz",
                 "list": true,
@@ -1923,7 +1930,7 @@
                 "placeholder": "",
                 "real_time_refresh": true,
                 "required": false,
-                "show": true,
+                "show": false,
                 "title_case": false,
                 "toggle": false,
                 "tool_mode": false,
@@ -2008,8 +2015,8 @@
           "width": 320
         },
         "position": {
-          "x": 1323.8122531770885,
-          "y": 1477.61317096205
+          "x": 1327.9869425507682,
+          "y": 1434.474714100691
         },
         "positionAbsolute": {
           "x": 1318.9043936921921,
@@ -2572,7 +2579,7 @@
               "db_user",
               "db_password",
               "dsn",
-              "wallet_dir",
+              "wallet_file",
               "wallet_password",
               "table_name",
               "distance_strategy",
@@ -2589,9 +2596,8 @@
             "frozen": false,
             "icon": "Oracle",
             "legacy": false,
-            "lf_version": "1.7.1",
             "metadata": {
-              "code_hash": "1b547d2a42e5",
+              "code_hash": "af989537d505",
               "dependencies": {
                 "dependencies": [
                   {
@@ -2670,7 +2676,7 @@
                 "show": true,
                 "title_case": false,
                 "type": "code",
-                "value": "from lfx.base.vectorstores.model import LCVectorStoreComponent, check_cached_vector_store\nfrom lfx.helpers.data import docs_to_data\nfrom lfx.io import (\n    DropdownInput,\n    FloatInput,\n    HandleInput,\n    IntInput,\n    SecretStrInput,\n    StrInput,\n)\nfrom lfx.schema.data import Data\n\n\nclass OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):\n    \"\"\"Oracle Database 23ai vector store with search capabilities.\"\"\"\n\n    display_name: str = \"Oracle Database Vector Store\"\n    description: str = \"Oracle 23ai Vector Store with local embeddings and configurable retrieval\"\n    name = \"OracleDBVector\"\n    icon = \"Oracle\"\n\n    inputs = [\n        SecretStrInput(\n            name=\"db_user\",\n            display_name=\"Database User\",\n            info=\"Oracle database username (e.g., ADMIN)\",\n        ),\n        SecretStrInput(\n            name=\"db_password\",\n            display_name=\"Database Password\",\n            info=\"Oracle database password\",\n        ),\n        SecretStrInput(\n            name=\"dsn\",\n            display_name=\"DSN\",\n            info=\"Database connection string (e.g., CA4X9LQR5QLMO4EB_high)\",\n        ),\n        SecretStrInput(\n            name=\"wallet_dir\",\n            display_name=\"Wallet Directory\",\n            info=\"Path to Oracle wallet directory (e.g., /data/wallet)\",\n            value=\"/data/wallet\",\n        ),\n        SecretStrInput(\n            name=\"wallet_password\",\n            display_name=\"Wallet Password\",\n            info=\"Oracle wallet password\",\n        ),\n        StrInput(\n            name=\"table_name\",\n            display_name=\"Table Name\",\n            info=\"Vector table name (e.g., PDFCOLLECTION)\",\n            value=\"PDFCOLLECTION\",\n        ),\n        DropdownInput(\n            name=\"distance_strategy\",\n            display_name=\"Distance Strategy\",\n            options=[\"COSINE\", \"EUCLIDEAN_DISTANCE\", \"DOT_PRODUCT\"],\n            value=\"COSINE\",\n            advanced=True,\n        ),\n        *LCVectorStoreComponent.inputs,\n        HandleInput(\n            name=\"embedding\",\n            display_name=\"Embedding Model\",\n            input_types=[\"Embeddings\"],\n        ),\n        IntInput(\n            name=\"number_of_results\",\n            display_name=\"Number of Results\",\n            value=5,\n            advanced=True,\n        ),\n        DropdownInput(\n            name=\"search_type\",\n            display_name=\"Search Type\",\n            options=[\"similarity\", \"mmr\", \"similarity_score_threshold\"],\n            value=\"similarity\",\n            advanced=True,\n        ),\n        FloatInput(\n            name=\"score_threshold\",\n            display_name=\"Score Threshold\",\n            value=0.35,\n            advanced=True,\n        ),\n        IntInput(\n            name=\"fetch_k\",\n            display_name=\"Fetch K\",\n            value=20,\n            advanced=True,\n        ),\n        FloatInput(\n            name=\"mmr_lambda\",\n            display_name=\"MMR Lambda\",\n            value=0.5,\n            advanced=True,\n        ),\n    ]\n\n    def _clean_metadata(self, metadata):\n        \"\"\"Clean metadata to ensure JSON serializability.\"\"\"\n        import json\n\n        if not metadata:\n            return {}\n\n        cleaned = {}\n        for key, value in metadata.items():\n            try:\n                json.dumps(value)\n                cleaned[key] = value\n            except (TypeError, ValueError):\n                cleaned[key] = str(value)\n\n        return cleaned\n\n    @check_cached_vector_store\n    def build_vector_store(self):\n        try:\n            import oracledb\n            from langchain_community.vectorstores.oraclevs import OracleVS\n            from langchain_community.vectorstores.utils import DistanceStrategy\n        except ImportError as e:\n            msg = \"Could not import required packages.\"\n            raise ImportError(msg) from e\n\n        connect_args = {\n            \"user\": self.db_user,\n            \"password\": self.db_password,\n            \"dsn\": self.dsn,\n            \"config_dir\": self.wallet_dir,\n            \"wallet_location\": self.wallet_dir,\n            \"wallet_password\": self.wallet_password,\n        }\n\n        try:\n            conn = oracledb.connect(**connect_args)\n            self.log(f\"Connected to Oracle Database: {self.dsn}\")\n        except Exception as e:\n            error_msg = f\"Failed to connect to Oracle Database: {str(e)}\"\n            self.status = error_msg\n            raise ConnectionError(error_msg) from e\n\n        try:\n            cursor = conn.cursor()\n            cursor.execute(\n                \"SELECT table_name FROM user_tables WHERE UPPER(table_name) = UPPER(:table_name)\",\n                {\"table_name\": self.table_name},\n            )\n            row = cursor.fetchone()\n\n            if not row:\n                cursor.close()\n                msg = f\"Table '{self.table_name}' does not exist.\"\n                self.status = msg\n                raise RuntimeError(msg)\n\n            actual_table_name = row[0]\n            cursor.close()\n            self.log(f\"Found table: {actual_table_name}\")\n        except Exception as e:\n            error_msg = f\"Failed to validate table: {str(e)}\"\n            self.status = error_msg\n            raise RuntimeError(error_msg) from e\n\n        ds_map = {\n            \"COSINE\": DistanceStrategy.COSINE,\n            \"EUCLIDEAN_DISTANCE\": DistanceStrategy.EUCLIDEAN_DISTANCE,\n            \"DOT_PRODUCT\": DistanceStrategy.DOT_PRODUCT,\n        }\n        distance = ds_map.get(self.distance_strategy, DistanceStrategy.COSINE)\n\n        oracle_store = OracleVS(\n            client=conn,\n            table_name=actual_table_name,\n            distance_strategy=distance,\n            embedding_function=self.embedding,\n        )\n\n        self.log(f\"Created OracleVS instance for table: {actual_table_name}\")\n\n        self.ingest_data = self._prepare_ingest_data()\n\n        documents = []\n        for _input in self.ingest_data or []:\n            if isinstance(_input, Data):\n                doc = _input.to_lc_document()\n                doc.metadata = self._clean_metadata(doc.metadata)\n                documents.append(doc)\n            else:\n                if hasattr(_input, 'metadata'):\n                    _input.metadata = self._clean_metadata(_input.metadata)\n                documents.append(_input)\n\n        if documents:\n            try:\n                self.log(f\"Ingesting {len(documents)} documents...\")\n                oracle_store.add_documents(documents)\n                success_msg = f\"Successfully added {len(documents)} documents\"\n                self.status = success_msg\n                self.log(success_msg)\n            except Exception as e:\n                error_msg = f\"Failed to add documents: {str(e)}\"\n                self.status = error_msg\n                self.log(error_msg)\n                raise RuntimeError(error_msg) from e\n\n        return oracle_store\n\n    def search_documents(self) -> list[Data]:\n        vector_store = self.build_vector_store()\n\n        if self.search_query and isinstance(self.search_query, str) and self.search_query.strip():\n            query = self.search_query.strip()\n            k = max(1, self.number_of_results or 5)\n\n            self.log(f\"Searching for: {query}\")\n\n            try:\n                if self.search_type == \"similarity\":\n                    kwargs = {}\n                    if self.fetch_k:\n                        kwargs[\"fetch_k\"] = self.fetch_k\n                    docs = vector_store.similarity_search(query=query, k=k, **kwargs)\n\n                elif self.search_type == \"mmr\":\n                    kwargs = {}\n                    if self.fetch_k:\n                        kwargs[\"fetch_k\"] = self.fetch_k\n                    docs = vector_store.max_marginal_relevance_search(\n                        query=query,\n                        k=k,\n                        lambda_mult=self.mmr_lambda,\n                        **kwargs,\n                    )\n\n                elif self.search_type == \"similarity_score_threshold\":\n                    retriever = vector_store.as_retriever(\n                        search_type=\"similarity_score_threshold\",\n                        search_kwargs={\n                            \"k\": k,\n                            \"score_threshold\": self.score_threshold,\n                            **({\"fetch_k\": self.fetch_k} if self.fetch_k else {}),\n                        },\n                    )\n                    docs = retriever.get_relevant_documents(query)\n\n                else:\n                    docs = vector_store.similarity_search(query=query, k=k)\n\n                data = docs_to_data(docs)\n                self.status = data\n                self.log(f\"Found {len(docs)} results\")\n                return data\n\n            except Exception as e:\n                error_msg = f\"Search failed: {str(e)}\"\n                self.status = error_msg\n                self.log(error_msg)\n                return []\n\n        return []"
+                "value": "import os\nimport tempfile\nimport zipfile\nfrom pathlib import Path\n\nfrom lfx.base.vectorstores.model import LCVectorStoreComponent, check_cached_vector_store\nfrom lfx.helpers.data import docs_to_data\nfrom lfx.io import (\n    DropdownInput,\n    FileInput,\n    FloatInput,\n    HandleInput,\n    IntInput,\n    SecretStrInput,\n    StrInput,\n)\nfrom lfx.schema.data import Data\nfrom lfx.base.data.storage_utils import parse_storage_path, read_file_bytes\nfrom lfx.services.deps import get_settings_service, get_storage_service\nfrom lfx.utils.async_helpers import run_until_complete\n\n\nclass OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):\n    \"\"\"Oracle Database 23ai vector store with search capabilities.\"\"\"\n\n    display_name: str = \"Oracle Database Vector Store\"\n    description: str = \"Oracle 23ai Vector Store with local embeddings and configurable retrieval\"\n    name = \"OracleDBVector\"\n    icon = \"Oracle\"\n\n    inputs = [\n        StrInput(\n            name=\"db_user\",\n            display_name=\"Database User\",\n            info=\"Oracle database username (e.g., ADMIN)\",\n        ),\n        SecretStrInput(\n            name=\"db_password\",\n            display_name=\"Database Password\",\n            info=\"Oracle database password\",\n        ),\n        StrInput(\n            name=\"dsn\",\n            display_name=\"DSN\",\n            info=\"Database connection string (e.g., CA4X9LQR5QLMO4EB_high)\",\n        ),\n        FileInput(\n            name=\"wallet_file\",\n            display_name=\"Wallet ZIP File\",\n            info=\"Upload Oracle wallet ZIP file\",\n            file_types=[\"zip\"],\n        ),\n        SecretStrInput(\n            name=\"wallet_password\",\n            display_name=\"Wallet Password\",\n            info=\"Oracle wallet password\",\n        ),\n        StrInput(\n            name=\"table_name\",\n            display_name=\"Table Name\",\n            info=\"Vector table name (e.g., PDFCOLLECTION)\",\n            value=\"PDFCOLLECTION\",\n        ),\n        DropdownInput(\n            name=\"distance_strategy\",\n            display_name=\"Distance Strategy\",\n            options=[\"COSINE\", \"EUCLIDEAN_DISTANCE\", \"DOT_PRODUCT\"],\n            value=\"COSINE\",\n            advanced=True,\n        ),\n        *LCVectorStoreComponent.inputs,\n        HandleInput(\n            name=\"embedding\",\n            display_name=\"Embedding Model\",\n            input_types=[\"Embeddings\"],\n        ),\n        IntInput(\n            name=\"number_of_results\",\n            display_name=\"Number of Results\",\n            value=5,\n            advanced=True,\n        ),\n        DropdownInput(\n            name=\"search_type\",\n            display_name=\"Search Type\",\n            options=[\"similarity\", \"mmr\", \"similarity_score_threshold\"],\n            value=\"similarity\",\n            advanced=True,\n        ),\n        FloatInput(\n            name=\"score_threshold\",\n            display_name=\"Score Threshold\",\n            value=0.35,\n            advanced=True,\n        ),\n        IntInput(\n            name=\"fetch_k\",\n            display_name=\"Fetch K\",\n            value=20,\n            advanced=True,\n        ),\n        FloatInput(\n            name=\"mmr_lambda\",\n            display_name=\"MMR Lambda\",\n            value=0.5,\n            advanced=True,\n        ),\n    ]\n\n    def _clean_metadata(self, metadata):\n        \"\"\"Clean metadata to ensure JSON serializability.\"\"\"\n        import json\n\n        if not metadata:\n            return {}\n\n        cleaned = {}\n        for key, value in metadata.items():\n            try:\n                json.dumps(value)\n                cleaned[key] = value\n            except (TypeError, ValueError):\n                cleaned[key] = str(value)\n\n        return cleaned\n\n    def _get_wallet_file_path(self) -> str:\n        \"\"\"업로드된 wallet 파일의 로컬 경로를 가져옵니다. S3 storage인 경우 임시 파일로 다운로드합니다.\"\"\"\n        if not self.wallet_file:\n            raise ValueError(\"Wallet file is required\")\n        \n        settings = get_settings_service().settings\n        \n        # Local storage: 파일 경로를 그대로 사용\n        if settings.storage_type == \"local\":\n            if not os.path.exists(self.wallet_file):\n                raise FileNotFoundError(f\"Wallet file not found: {self.wallet_file}\")\n            return self.wallet_file\n        \n        # S3 storage: 파일을 임시 위치로 다운로드\n        parsed = parse_storage_path(self.wallet_file)\n        if not parsed:\n            raise ValueError(f\"Invalid S3 path format: {self.wallet_file}. Expected 'flow_id/filename'\")\n        \n        storage_service = get_storage_service()\n        flow_id, filename = parsed\n        \n        # S3에서 파일 내용 가져오기\n        content = run_until_complete(storage_service.get_file(flow_id, filename))\n        \n        # 임시 파일로 저장\n        suffix = Path(filename).suffix\n        temp_file = tempfile.NamedTemporaryFile(mode=\"wb\", suffix=suffix, delete=False)\n        try:\n            temp_file.write(content)\n            temp_file.flush()\n            temp_path = temp_file.name\n        finally:\n            temp_file.close()\n        \n        self.log(f\"Downloaded wallet file from S3 to: {temp_path}\")\n        return temp_path\n\n    @check_cached_vector_store\n    def build_vector_store(self):\n        try:\n            import oracledb\n            from langchain_community.vectorstores.oraclevs import OracleVS\n            from langchain_community.vectorstores.utils import DistanceStrategy\n        except ImportError as e:\n            msg = \"Could not import required packages.\"\n            raise ImportError(msg) from e\n\n        # wallet zip 파일 경로 가져오기 (로컬 또는 S3에서 다운로드)\n        wallet_file_path = None\n        temp_wallet_dir = None\n        temp_downloaded_wallet = None\n        \n        try:\n            wallet_file_path = self._get_wallet_file_path()\n            \n            # S3에서 다운로드한 경우 나중에 정리할 수 있도록 추적\n            settings = get_settings_service().settings\n            if settings.storage_type == \"s3\":\n                temp_downloaded_wallet = wallet_file_path\n            \n            # 임시 디렉토리 생성 및 zip 파일 압축 해제\n            temp_wallet_dir = tempfile.mkdtemp(prefix=\"oracle_wallet_\")\n            self.log(f\"Extracting wallet to temporary directory: {temp_wallet_dir}\")\n            \n            with zipfile.ZipFile(wallet_file_path, 'r') as zip_ref:\n                zip_ref.extractall(temp_wallet_dir)\n            \n            self.log(f\"Wallet extracted successfully\")\n            \n        except Exception as e:\n            # 실패 시 임시 파일들 정리\n            if temp_wallet_dir and os.path.exists(temp_wallet_dir):\n                import shutil\n                shutil.rmtree(temp_wallet_dir, ignore_errors=True)\n            if temp_downloaded_wallet and os.path.exists(temp_downloaded_wallet):\n                os.unlink(temp_downloaded_wallet)\n            error_msg = f\"Failed to extract wallet file: {str(e)}\"\n            self.status = error_msg\n            raise RuntimeError(error_msg) from e\n        finally:\n            # S3에서 다운로드한 임시 wallet 파일 정리\n            if temp_downloaded_wallet and os.path.exists(temp_downloaded_wallet):\n                try:\n                    os.unlink(temp_downloaded_wallet)\n                except Exception:\n                    pass\n\n        connect_args = {\n            \"user\": self.db_user,\n            \"password\": self.db_password,\n            \"dsn\": self.dsn,\n            \"config_dir\": temp_wallet_dir,\n            \"wallet_location\": temp_wallet_dir,\n            \"wallet_password\": self.wallet_password,\n        }\n\n        try:\n            conn = oracledb.connect(**connect_args)\n            self.log(f\"Connected to Oracle Database: {self.dsn}\")\n        except Exception as e:\n            # 연결 실패 시 임시 디렉토리 정리\n            if temp_wallet_dir and os.path.exists(temp_wallet_dir):\n                import shutil\n                shutil.rmtree(temp_wallet_dir, ignore_errors=True)\n            error_msg = f\"Failed to connect to Oracle Database: {str(e)}\"\n            self.status = error_msg\n            raise ConnectionError(error_msg) from e\n\n        try:\n            cursor = conn.cursor()\n            cursor.execute(\n                \"SELECT table_name FROM user_tables WHERE UPPER(table_name) = UPPER(:table_name)\",\n                {\"table_name\": self.table_name},\n            )\n            row = cursor.fetchone()\n\n            if not row:\n                # 테이블이 존재하지 않으면 생성\n                self.log(f\"Table '{self.table_name}' does not exist. Creating table...\")\n                try:\n                    # 테이블 생성 SQL\n                    create_table_sql = f\"\"\"\n                    CREATE TABLE {self.db_user}.{self.table_name} (\n                        ID VARCHAR2(100 BYTE),\n                        TEXT CLOB,\n                        METADATA CLOB,\n                        EMBEDDING VECTOR(1024, *),\n                        CREATED_AT TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP\n                    )\n                    \"\"\"\n                    cursor.execute(create_table_sql)\n                    self.log(f\"Table '{self.table_name}' created successfully\")\n                    \n                    # Primary Key 추가\n                    pk_sql = f\"\"\"\n                    ALTER TABLE {self.db_user}.{self.table_name} ADD PRIMARY KEY (ID)\n                    USING INDEX PCTFREE 10 INITRANS 20 MAXTRANS 255\n                    TABLESPACE DATA ENABLE\n                    \"\"\"\n                    cursor.execute(pk_sql)\n                    self.log(f\"Primary key added to '{self.table_name}'\")\n                    \n                    # Vector 인덱스 생성\n                    index_sql = f\"\"\"\n                    CREATE VECTOR INDEX {self.db_user}.VECTOR_IDX_{self.table_name} ON {self.db_user}.{self.table_name} (EMBEDDING)\n                    ORGANIZATION INMEMORY NEIGHBOR GRAPH\n                    WITH DISTANCE COSINE\n                    WITH TARGET ACCURACY 95\n                    \"\"\"\n                    cursor.execute(index_sql)\n                    self.log(f\"Vector index created for '{self.table_name}'\")\n                    \n                    conn.commit()\n                    actual_table_name = self.table_name\n                except Exception as create_error:\n                    conn.rollback()\n                    cursor.close()\n                    error_msg = f\"Failed to create table '{self.table_name}': {str(create_error)}\"\n                    self.status = error_msg\n                    raise RuntimeError(error_msg) from create_error\n            else:\n                actual_table_name = row[0]\n                self.log(f\"Found existing table: {actual_table_name}\")\n            \n            cursor.close()\n        except Exception as e:\n            error_msg = f\"Failed to validate or create table: {str(e)}\"\n            self.status = error_msg\n            raise RuntimeError(error_msg) from e\n\n        ds_map = {\n            \"COSINE\": DistanceStrategy.COSINE,\n            \"EUCLIDEAN_DISTANCE\": DistanceStrategy.EUCLIDEAN_DISTANCE,\n            \"DOT_PRODUCT\": DistanceStrategy.DOT_PRODUCT,\n        }\n        distance = ds_map.get(self.distance_strategy, DistanceStrategy.COSINE)\n\n        oracle_store = OracleVS(\n            client=conn,\n            table_name=actual_table_name,\n            distance_strategy=distance,\n            embedding_function=self.embedding,\n        )\n\n        self.log(f\"Created OracleVS instance for table: {actual_table_name}\")\n\n        self.ingest_data = self._prepare_ingest_data()\n\n        documents = []\n        for _input in self.ingest_data or []:\n            if isinstance(_input, Data):\n                doc = _input.to_lc_document()\n                doc.metadata = self._clean_metadata(doc.metadata)\n                documents.append(doc)\n            else:\n                if hasattr(_input, 'metadata'):\n                    _input.metadata = self._clean_metadata(_input.metadata)\n                documents.append(_input)\n\n        if documents:\n            try:\n                self.log(f\"Ingesting {len(documents)} documents...\")\n                oracle_store.add_documents(documents)\n                success_msg = f\"Successfully added {len(documents)} documents\"\n                self.status = success_msg\n                self.log(success_msg)\n            except Exception as e:\n                error_msg = f\"Failed to add documents: {str(e)}\"\n                self.status = error_msg\n                self.log(error_msg)\n                raise RuntimeError(error_msg) from e\n\n        return oracle_store\n\n    def search_documents(self) -> list[Data]:\n        vector_store = self.build_vector_store()\n\n        if self.search_query and isinstance(self.search_query, str) and self.search_query.strip():\n            query = self.search_query.strip()\n            k = max(1, self.number_of_results or 5)\n\n            self.log(f\"Searching for: {query}\")\n\n            try:\n                if self.search_type == \"similarity\":\n                    kwargs = {}\n                    if self.fetch_k:\n                        kwargs[\"fetch_k\"] = self.fetch_k\n                    docs = vector_store.similarity_search(query=query, k=k, **kwargs)\n\n                elif self.search_type == \"mmr\":\n                    kwargs = {}\n                    if self.fetch_k:\n                        kwargs[\"fetch_k\"] = self.fetch_k\n                    docs = vector_store.max_marginal_relevance_search(\n                        query=query,\n                        k=k,\n                        lambda_mult=self.mmr_lambda,\n                        **kwargs,\n                    )\n\n                elif self.search_type == \"similarity_score_threshold\":\n                    retriever = vector_store.as_retriever(\n                        search_type=\"similarity_score_threshold\",\n                        search_kwargs={\n                            \"k\": k,\n                            \"score_threshold\": self.score_threshold,\n                            **({\"fetch_k\": self.fetch_k} if self.fetch_k else {}),\n                        },\n                    )\n                    docs = retriever.get_relevant_documents(query)\n\n                else:\n                    docs = vector_store.similarity_search(query=query, k=k)\n\n                data = docs_to_data(docs)\n                self.status = data\n                self.log(f\"Found {len(docs)} results\")\n                return data\n\n            except Exception as e:\n                error_msg = f\"Search failed: {str(e)}\"\n                self.status = error_msg\n                self.log(error_msg)\n                return []\n\n        return []"
               },
               "db_password": {
                 "_input_type": "SecretStrInput",
@@ -2692,23 +2698,25 @@
                 "value": ""
               },
               "db_user": {
-                "_input_type": "SecretStrInput",
+                "_input_type": "StrInput",
                 "advanced": false,
                 "display_name": "Database User",
                 "dynamic": false,
                 "info": "Oracle database username (e.g., ADMIN)",
-                "input_types": [],
+                "list": false,
+                "list_add_label": "Add More",
                 "load_from_db": false,
                 "name": "db_user",
                 "override_skip": false,
-                "password": true,
                 "placeholder": "",
                 "required": false,
                 "show": true,
                 "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
                 "track_in_telemetry": false,
                 "type": "str",
-                "value": ""
+                "value": "admin"
               },
               "distance_strategy": {
                 "_input_type": "DropdownInput",
@@ -2739,23 +2747,25 @@
                 "value": "COSINE"
               },
               "dsn": {
-                "_input_type": "SecretStrInput",
+                "_input_type": "StrInput",
                 "advanced": false,
                 "display_name": "DSN",
                 "dynamic": false,
                 "info": "Database connection string (e.g., CA4X9LQR5QLMO4EB_high)",
-                "input_types": [],
+                "list": false,
+                "list_add_label": "Add More",
                 "load_from_db": false,
                 "name": "dsn",
                 "override_skip": false,
-                "password": true,
                 "placeholder": "",
                 "required": false,
                 "show": true,
                 "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
                 "track_in_telemetry": false,
                 "type": "str",
-                "value": ""
+                "value": "CA4X9LQR5QLMO4EB_high"
               },
               "embedding": {
                 "_input_type": "HandleInput",
@@ -2974,25 +2984,32 @@
                 "trace_as_metadata": true,
                 "track_in_telemetry": false,
                 "type": "str",
-                "value": "PDFCOLLECTION"
+                "value": "aviate2"
               },
-              "wallet_dir": {
-                "_input_type": "SecretStrInput",
+              "wallet_file": {
+                "_input_type": "FileInput",
                 "advanced": false,
-                "display_name": "Wallet Directory",
+                "display_name": "Wallet ZIP File",
                 "dynamic": false,
-                "info": "Path to Oracle wallet directory (e.g., /data/wallet)",
-                "input_types": [],
+                "fileTypes": [
+                  "zip"
+                ],
+                "file_path": "",
+                "info": "Upload Oracle wallet ZIP file",
+                "list": false,
+                "list_add_label": "Add More",
                 "load_from_db": false,
-                "name": "wallet_dir",
+                "name": "wallet_file",
                 "override_skip": false,
-                "password": true,
                 "placeholder": "",
                 "required": false,
                 "show": true,
+                "temp_file": false,
                 "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
                 "track_in_telemetry": false,
-                "type": "str",
+                "type": "file",
                 "value": ""
               },
               "wallet_password": {
@@ -3024,492 +3041,12 @@
         "dragging": false,
         "id": "CustomComponent-UX78Z",
         "measured": {
-          "height": 799,
+          "height": 809,
           "width": 320
         },
         "position": {
-          "x": 2310.5400179448734,
-          "y": 1290.2860587257442
-        },
-        "selected": false,
-        "type": "genericNode"
-      },
-      {
-        "data": {
-          "id": "CustomComponent-Crmai",
-          "node": {
-            "base_classes": [
-              "Data",
-              "DataFrame"
-            ],
-            "beta": false,
-            "conditional_paths": [],
-            "custom_fields": {},
-            "description": "Oracle 23ai Vector Store with local embeddings and configurable retrieval",
-            "display_name": "Oracle Database Vector Store",
-            "documentation": "",
-            "edited": true,
-            "field_order": [
-              "db_user",
-              "db_password",
-              "dsn",
-              "wallet_dir",
-              "wallet_password",
-              "table_name",
-              "distance_strategy",
-              "ingest_data",
-              "search_query",
-              "should_cache_vector_store",
-              "embedding",
-              "number_of_results",
-              "search_type",
-              "score_threshold",
-              "fetch_k",
-              "mmr_lambda"
-            ],
-            "frozen": false,
-            "icon": "Oracle",
-            "legacy": false,
-            "lf_version": "1.7.1",
-            "metadata": {
-              "code_hash": "1b547d2a42e5",
-              "dependencies": {
-                "dependencies": [
-                  {
-                    "name": "lfx",
-                    "version": "0.2.1"
-                  },
-                  {
-                    "name": "oracledb",
-                    "version": "3.4.1"
-                  },
-                  {
-                    "name": "langchain_community",
-                    "version": "0.3.21"
-                  }
-                ],
-                "total_dependencies": 3
-              },
-              "module": "custom_components.oracle_database_vector_store"
-            },
-            "minimized": false,
-            "output_types": [],
-            "outputs": [
-              {
-                "allows_loop": false,
-                "cache": true,
-                "display_name": "Search Results",
-                "group_outputs": false,
-                "hidden": null,
-                "loop_types": null,
-                "method": "search_documents",
-                "name": "search_results",
-                "options": null,
-                "required_inputs": null,
-                "selected": "Data",
-                "tool_mode": true,
-                "types": [
-                  "Data"
-                ],
-                "value": "__UNDEFINED__"
-              },
-              {
-                "allows_loop": false,
-                "cache": true,
-                "display_name": "DataFrame",
-                "group_outputs": false,
-                "hidden": null,
-                "loop_types": null,
-                "method": "as_dataframe",
-                "name": "dataframe",
-                "options": null,
-                "required_inputs": null,
-                "tool_mode": true,
-                "types": [
-                  "DataFrame"
-                ],
-                "value": "__UNDEFINED__"
-              }
-            ],
-            "pinned": false,
-            "template": {
-              "_type": "Component",
-              "code": {
-                "advanced": true,
-                "dynamic": true,
-                "fileTypes": [],
-                "file_path": "",
-                "info": "",
-                "list": false,
-                "load_from_db": false,
-                "multiline": true,
-                "name": "code",
-                "password": false,
-                "placeholder": "",
-                "required": true,
-                "show": true,
-                "title_case": false,
-                "type": "code",
-                "value": "from lfx.base.vectorstores.model import LCVectorStoreComponent, check_cached_vector_store\nfrom lfx.helpers.data import docs_to_data\nfrom lfx.io import (\n    DropdownInput,\n    FloatInput,\n    HandleInput,\n    IntInput,\n    SecretStrInput,\n    StrInput,\n)\nfrom lfx.schema.data import Data\n\n\nclass OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):\n    \"\"\"Oracle Database 23ai vector store with search capabilities.\"\"\"\n\n    display_name: str = \"Oracle Database Vector Store\"\n    description: str = \"Oracle 23ai Vector Store with local embeddings and configurable retrieval\"\n    name = \"OracleDBVector\"\n    icon = \"Oracle\"\n\n    inputs = [\n        SecretStrInput(\n            name=\"db_user\",\n            display_name=\"Database User\",\n            info=\"Oracle database username (e.g., ADMIN)\",\n        ),\n        SecretStrInput(\n            name=\"db_password\",\n            display_name=\"Database Password\",\n            info=\"Oracle database password\",\n        ),\n        SecretStrInput(\n            name=\"dsn\",\n            display_name=\"DSN\",\n            info=\"Database connection string (e.g., CA4X9LQR5QLMO4EB_high)\",\n        ),\n        SecretStrInput(\n            name=\"wallet_dir\",\n            display_name=\"Wallet Directory\",\n            info=\"Path to Oracle wallet directory (e.g., /data/wallet)\",\n            value=\"/data/wallet\",\n        ),\n        SecretStrInput(\n            name=\"wallet_password\",\n            display_name=\"Wallet Password\",\n            info=\"Oracle wallet password\",\n        ),\n        StrInput(\n            name=\"table_name\",\n            display_name=\"Table Name\",\n            info=\"Vector table name (e.g., PDFCOLLECTION)\",\n            value=\"PDFCOLLECTION\",\n        ),\n        DropdownInput(\n            name=\"distance_strategy\",\n            display_name=\"Distance Strategy\",\n            options=[\"COSINE\", \"EUCLIDEAN_DISTANCE\", \"DOT_PRODUCT\"],\n            value=\"COSINE\",\n            advanced=True,\n        ),\n        *LCVectorStoreComponent.inputs,\n        HandleInput(\n            name=\"embedding\",\n            display_name=\"Embedding Model\",\n            input_types=[\"Embeddings\"],\n        ),\n        IntInput(\n            name=\"number_of_results\",\n            display_name=\"Number of Results\",\n            value=5,\n            advanced=True,\n        ),\n        DropdownInput(\n            name=\"search_type\",\n            display_name=\"Search Type\",\n            options=[\"similarity\", \"mmr\", \"similarity_score_threshold\"],\n            value=\"similarity\",\n            advanced=True,\n        ),\n        FloatInput(\n            name=\"score_threshold\",\n            display_name=\"Score Threshold\",\n            value=0.35,\n            advanced=True,\n        ),\n        IntInput(\n            name=\"fetch_k\",\n            display_name=\"Fetch K\",\n            value=20,\n            advanced=True,\n        ),\n        FloatInput(\n            name=\"mmr_lambda\",\n            display_name=\"MMR Lambda\",\n            value=0.5,\n            advanced=True,\n        ),\n    ]\n\n    def _clean_metadata(self, metadata):\n        \"\"\"Clean metadata to ensure JSON serializability.\"\"\"\n        import json\n\n        if not metadata:\n            return {}\n\n        cleaned = {}\n        for key, value in metadata.items():\n            try:\n                json.dumps(value)\n                cleaned[key] = value\n            except (TypeError, ValueError):\n                cleaned[key] = str(value)\n\n        return cleaned\n\n    @check_cached_vector_store\n    def build_vector_store(self):\n        try:\n            import oracledb\n            from langchain_community.vectorstores.oraclevs import OracleVS\n            from langchain_community.vectorstores.utils import DistanceStrategy\n        except ImportError as e:\n            msg = \"Could not import required packages.\"\n            raise ImportError(msg) from e\n\n        connect_args = {\n            \"user\": self.db_user,\n            \"password\": self.db_password,\n            \"dsn\": self.dsn,\n            \"config_dir\": self.wallet_dir,\n            \"wallet_location\": self.wallet_dir,\n            \"wallet_password\": self.wallet_password,\n        }\n\n        try:\n            conn = oracledb.connect(**connect_args)\n            self.log(f\"Connected to Oracle Database: {self.dsn}\")\n        except Exception as e:\n            error_msg = f\"Failed to connect to Oracle Database: {str(e)}\"\n            self.status = error_msg\n            raise ConnectionError(error_msg) from e\n\n        try:\n            cursor = conn.cursor()\n            cursor.execute(\n                \"SELECT table_name FROM user_tables WHERE UPPER(table_name) = UPPER(:table_name)\",\n                {\"table_name\": self.table_name},\n            )\n            row = cursor.fetchone()\n\n            if not row:\n                cursor.close()\n                msg = f\"Table '{self.table_name}' does not exist.\"\n                self.status = msg\n                raise RuntimeError(msg)\n\n            actual_table_name = row[0]\n            cursor.close()\n            self.log(f\"Found table: {actual_table_name}\")\n        except Exception as e:\n            error_msg = f\"Failed to validate table: {str(e)}\"\n            self.status = error_msg\n            raise RuntimeError(error_msg) from e\n\n        ds_map = {\n            \"COSINE\": DistanceStrategy.COSINE,\n            \"EUCLIDEAN_DISTANCE\": DistanceStrategy.EUCLIDEAN_DISTANCE,\n            \"DOT_PRODUCT\": DistanceStrategy.DOT_PRODUCT,\n        }\n        distance = ds_map.get(self.distance_strategy, DistanceStrategy.COSINE)\n\n        oracle_store = OracleVS(\n            client=conn,\n            table_name=actual_table_name,\n            distance_strategy=distance,\n            embedding_function=self.embedding,\n        )\n\n        self.log(f\"Created OracleVS instance for table: {actual_table_name}\")\n\n        self.ingest_data = self._prepare_ingest_data()\n\n        documents = []\n        for _input in self.ingest_data or []:\n            if isinstance(_input, Data):\n                doc = _input.to_lc_document()\n                doc.metadata = self._clean_metadata(doc.metadata)\n                documents.append(doc)\n            else:\n                if hasattr(_input, 'metadata'):\n                    _input.metadata = self._clean_metadata(_input.metadata)\n                documents.append(_input)\n\n        if documents:\n            try:\n                self.log(f\"Ingesting {len(documents)} documents...\")\n                oracle_store.add_documents(documents)\n                success_msg = f\"Successfully added {len(documents)} documents\"\n                self.status = success_msg\n                self.log(success_msg)\n            except Exception as e:\n                error_msg = f\"Failed to add documents: {str(e)}\"\n                self.status = error_msg\n                self.log(error_msg)\n                raise RuntimeError(error_msg) from e\n\n        return oracle_store\n\n    def search_documents(self) -> list[Data]:\n        vector_store = self.build_vector_store()\n\n        if self.search_query and isinstance(self.search_query, str) and self.search_query.strip():\n            query = self.search_query.strip()\n            k = max(1, self.number_of_results or 5)\n\n            self.log(f\"Searching for: {query}\")\n\n            try:\n                if self.search_type == \"similarity\":\n                    kwargs = {}\n                    if self.fetch_k:\n                        kwargs[\"fetch_k\"] = self.fetch_k\n                    docs = vector_store.similarity_search(query=query, k=k, **kwargs)\n\n                elif self.search_type == \"mmr\":\n                    kwargs = {}\n                    if self.fetch_k:\n                        kwargs[\"fetch_k\"] = self.fetch_k\n                    docs = vector_store.max_marginal_relevance_search(\n                        query=query,\n                        k=k,\n                        lambda_mult=self.mmr_lambda,\n                        **kwargs,\n                    )\n\n                elif self.search_type == \"similarity_score_threshold\":\n                    retriever = vector_store.as_retriever(\n                        search_type=\"similarity_score_threshold\",\n                        search_kwargs={\n                            \"k\": k,\n                            \"score_threshold\": self.score_threshold,\n                            **({\"fetch_k\": self.fetch_k} if self.fetch_k else {}),\n                        },\n                    )\n                    docs = retriever.get_relevant_documents(query)\n\n                else:\n                    docs = vector_store.similarity_search(query=query, k=k)\n\n                data = docs_to_data(docs)\n                self.status = data\n                self.log(f\"Found {len(docs)} results\")\n                return data\n\n            except Exception as e:\n                error_msg = f\"Search failed: {str(e)}\"\n                self.status = error_msg\n                self.log(error_msg)\n                return []\n\n        return []"
-              },
-              "db_password": {
-                "_input_type": "SecretStrInput",
-                "advanced": false,
-                "display_name": "Database Password",
-                "dynamic": false,
-                "info": "Oracle database password",
-                "input_types": [],
-                "load_from_db": false,
-                "name": "db_password",
-                "override_skip": false,
-                "password": true,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "track_in_telemetry": false,
-                "type": "str",
-                "value": ""
-              },
-              "db_user": {
-                "_input_type": "SecretStrInput",
-                "advanced": false,
-                "display_name": "Database User",
-                "dynamic": false,
-                "info": "Oracle database username (e.g., ADMIN)",
-                "input_types": [],
-                "load_from_db": false,
-                "name": "db_user",
-                "override_skip": false,
-                "password": true,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "track_in_telemetry": false,
-                "type": "str",
-                "value": ""
-              },
-              "distance_strategy": {
-                "_input_type": "DropdownInput",
-                "advanced": true,
-                "combobox": false,
-                "dialog_inputs": {},
-                "display_name": "Distance Strategy",
-                "dynamic": false,
-                "external_options": {},
-                "info": "",
-                "name": "distance_strategy",
-                "options": [
-                  "COSINE",
-                  "EUCLIDEAN_DISTANCE",
-                  "DOT_PRODUCT"
-                ],
-                "options_metadata": [],
-                "override_skip": false,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "toggle": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "track_in_telemetry": true,
-                "type": "str",
-                "value": "COSINE"
-              },
-              "dsn": {
-                "_input_type": "SecretStrInput",
-                "advanced": false,
-                "display_name": "DSN",
-                "dynamic": false,
-                "info": "Database connection string (e.g., CA4X9LQR5QLMO4EB_high)",
-                "input_types": [],
-                "load_from_db": false,
-                "name": "dsn",
-                "override_skip": false,
-                "password": true,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "track_in_telemetry": false,
-                "type": "str",
-                "value": ""
-              },
-              "embedding": {
-                "_input_type": "HandleInput",
-                "advanced": false,
-                "display_name": "Embedding Model",
-                "dynamic": false,
-                "info": "",
-                "input_types": [
-                  "Embeddings"
-                ],
-                "list": false,
-                "list_add_label": "Add More",
-                "name": "embedding",
-                "override_skip": false,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "trace_as_metadata": true,
-                "track_in_telemetry": false,
-                "type": "other",
-                "value": ""
-              },
-              "fetch_k": {
-                "_input_type": "IntInput",
-                "advanced": true,
-                "display_name": "Fetch K",
-                "dynamic": false,
-                "info": "",
-                "list": false,
-                "list_add_label": "Add More",
-                "name": "fetch_k",
-                "override_skip": false,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "track_in_telemetry": true,
-                "type": "int",
-                "value": 20
-              },
-              "ingest_data": {
-                "_input_type": "HandleInput",
-                "advanced": false,
-                "display_name": "Ingest Data",
-                "dynamic": false,
-                "info": "",
-                "input_types": [
-                  "Data",
-                  "DataFrame"
-                ],
-                "list": true,
-                "list_add_label": "Add More",
-                "name": "ingest_data",
-                "override_skip": false,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "trace_as_metadata": true,
-                "track_in_telemetry": false,
-                "type": "other",
-                "value": ""
-              },
-              "mmr_lambda": {
-                "_input_type": "FloatInput",
-                "advanced": true,
-                "display_name": "MMR Lambda",
-                "dynamic": false,
-                "info": "",
-                "list": false,
-                "list_add_label": "Add More",
-                "name": "mmr_lambda",
-                "override_skip": false,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "track_in_telemetry": true,
-                "type": "float",
-                "value": 0.5
-              },
-              "number_of_results": {
-                "_input_type": "IntInput",
-                "advanced": true,
-                "display_name": "Number of Results",
-                "dynamic": false,
-                "info": "",
-                "list": false,
-                "list_add_label": "Add More",
-                "name": "number_of_results",
-                "override_skip": false,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "track_in_telemetry": true,
-                "type": "int",
-                "value": 5
-              },
-              "score_threshold": {
-                "_input_type": "FloatInput",
-                "advanced": true,
-                "display_name": "Score Threshold",
-                "dynamic": false,
-                "info": "",
-                "list": false,
-                "list_add_label": "Add More",
-                "name": "score_threshold",
-                "override_skip": false,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "track_in_telemetry": true,
-                "type": "float",
-                "value": 0.35
-              },
-              "search_query": {
-                "_input_type": "QueryInput",
-                "advanced": false,
-                "display_name": "Search Query",
-                "dynamic": false,
-                "info": "Enter a query to run a similarity search.",
-                "input_types": [
-                  "Message"
-                ],
-                "list": false,
-                "list_add_label": "Add More",
-                "load_from_db": false,
-                "name": "search_query",
-                "override_skip": false,
-                "placeholder": "Enter a query...",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": true,
-                "trace_as_input": true,
-                "trace_as_metadata": true,
-                "track_in_telemetry": false,
-                "type": "query",
-                "value": ""
-              },
-              "search_type": {
-                "_input_type": "DropdownInput",
-                "advanced": true,
-                "combobox": false,
-                "dialog_inputs": {},
-                "display_name": "Search Type",
-                "dynamic": false,
-                "external_options": {},
-                "info": "",
-                "name": "search_type",
-                "options": [
-                  "similarity",
-                  "mmr",
-                  "similarity_score_threshold"
-                ],
-                "options_metadata": [],
-                "override_skip": false,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "toggle": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "track_in_telemetry": true,
-                "type": "str",
-                "value": "similarity"
-              },
-              "should_cache_vector_store": {
-                "_input_type": "BoolInput",
-                "advanced": true,
-                "display_name": "Cache Vector Store",
-                "dynamic": false,
-                "info": "If True, the vector store will be cached for the current build of the component. This is useful for components that have multiple output methods and want to share the same vector store.",
-                "list": false,
-                "list_add_label": "Add More",
-                "name": "should_cache_vector_store",
-                "override_skip": false,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "track_in_telemetry": true,
-                "type": "bool",
-                "value": true
-              },
-              "table_name": {
-                "_input_type": "StrInput",
-                "advanced": false,
-                "display_name": "Table Name",
-                "dynamic": false,
-                "info": "Vector table name (e.g., PDFCOLLECTION)",
-                "list": false,
-                "list_add_label": "Add More",
-                "load_from_db": false,
-                "name": "table_name",
-                "override_skip": false,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "tool_mode": false,
-                "trace_as_metadata": true,
-                "track_in_telemetry": false,
-                "type": "str",
-                "value": "PDFCOLLECTION"
-              },
-              "wallet_dir": {
-                "_input_type": "SecretStrInput",
-                "advanced": false,
-                "display_name": "Wallet Directory",
-                "dynamic": false,
-                "info": "Path to Oracle wallet directory (e.g., /data/wallet)",
-                "input_types": [],
-                "load_from_db": false,
-                "name": "wallet_dir",
-                "override_skip": false,
-                "password": true,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "track_in_telemetry": false,
-                "type": "str",
-                "value": ""
-              },
-              "wallet_password": {
-                "_input_type": "SecretStrInput",
-                "advanced": false,
-                "display_name": "Wallet Password",
-                "dynamic": false,
-                "info": "Oracle wallet password",
-                "input_types": [],
-                "load_from_db": false,
-                "name": "wallet_password",
-                "override_skip": false,
-                "password": true,
-                "placeholder": "",
-                "required": false,
-                "show": true,
-                "title_case": false,
-                "track_in_telemetry": false,
-                "type": "str",
-                "value": ""
-              }
-            },
-            "tool_mode": false
-          },
-          "selected_output": "search_results",
-          "showNode": true,
-          "type": "OracleDBVector"
-        },
-        "dragging": false,
-        "id": "CustomComponent-Crmai",
-        "measured": {
-          "height": 799,
-          "width": 320
-        },
-        "position": {
-          "x": 1205.7674746236153,
-          "y": 292.18962648195077
+          "x": 2182.516210485356,
+          "y": 1268.0210487327847
         },
         "selected": false,
         "type": "genericNode"
@@ -3563,7 +3100,7 @@
             ],
             "frozen": false,
             "icon": "Ollama",
-            "last_updated": "2026-01-03T10:05:51.265Z",
+            "last_updated": "2026-01-05T01:47:43.030Z",
             "legacy": false,
             "lf_version": "1.7.1",
             "metadata": {
@@ -3667,6 +3204,12 @@
             ],
             "pinned": false,
             "template": {
+              "_frontend_node_flow_id": {
+                "value": "975671cf-ee7b-4f67-967b-c88fcf9ac9d5"
+              },
+              "_frontend_node_folder_id": {
+                "value": "d22141c8-002d-4a1a-a8d4-e0cba0f83729"
+              },
               "_type": "Component",
               "api_key": {
                 "_input_type": "SecretStrInput",
@@ -3873,6 +3416,7 @@
                 "type": "str",
                 "value": ""
               },
+              "is_refresh": false,
               "metadata": {
                 "_input_type": "DictInput",
                 "advanced": true,
@@ -4388,12 +3932,504 @@
         },
         "selected": false,
         "type": "genericNode"
+      },
+      {
+        "data": {
+          "id": "OracleDBVector-NJNY5",
+          "node": {
+            "base_classes": [
+              "Data",
+              "DataFrame"
+            ],
+            "beta": false,
+            "conditional_paths": [],
+            "custom_fields": {},
+            "description": "Oracle 23ai Vector Store with local embeddings and configurable retrieval",
+            "display_name": "Oracle Database Vector Store",
+            "documentation": "",
+            "edited": true,
+            "field_order": [
+              "db_user",
+              "db_password",
+              "dsn",
+              "wallet_file",
+              "wallet_password",
+              "table_name",
+              "distance_strategy",
+              "ingest_data",
+              "search_query",
+              "should_cache_vector_store",
+              "embedding",
+              "number_of_results",
+              "search_type",
+              "score_threshold",
+              "fetch_k",
+              "mmr_lambda"
+            ],
+            "frozen": false,
+            "icon": "Oracle",
+            "legacy": false,
+            "lf_version": "1.7.1",
+            "metadata": {
+              "code_hash": "af989537d505",
+              "dependencies": {
+                "dependencies": [
+                  {
+                    "name": "lfx",
+                    "version": "0.2.1"
+                  },
+                  {
+                    "name": "oracledb",
+                    "version": "3.4.1"
+                  },
+                  {
+                    "name": "langchain_community",
+                    "version": "0.3.21"
+                  }
+                ],
+                "total_dependencies": 3
+              },
+              "module": "custom_components.oracle_database_vector_store"
+            },
+            "minimized": false,
+            "output_types": [],
+            "outputs": [
+              {
+                "allows_loop": false,
+                "cache": true,
+                "display_name": "Search Results",
+                "group_outputs": false,
+                "hidden": null,
+                "loop_types": null,
+                "method": "search_documents",
+                "name": "search_results",
+                "options": null,
+                "required_inputs": null,
+                "selected": "Data",
+                "tool_mode": true,
+                "types": [
+                  "Data"
+                ],
+                "value": "__UNDEFINED__"
+              },
+              {
+                "allows_loop": false,
+                "cache": true,
+                "display_name": "DataFrame",
+                "group_outputs": false,
+                "hidden": null,
+                "loop_types": null,
+                "method": "as_dataframe",
+                "name": "dataframe",
+                "options": null,
+                "required_inputs": null,
+                "selected": "DataFrame",
+                "tool_mode": true,
+                "types": [
+                  "DataFrame"
+                ],
+                "value": "__UNDEFINED__"
+              }
+            ],
+            "pinned": false,
+            "template": {
+              "_type": "Component",
+              "code": {
+                "advanced": true,
+                "dynamic": true,
+                "fileTypes": [],
+                "file_path": "",
+                "info": "",
+                "list": false,
+                "load_from_db": false,
+                "multiline": true,
+                "name": "code",
+                "password": false,
+                "placeholder": "",
+                "required": true,
+                "show": true,
+                "title_case": false,
+                "type": "code",
+                "value": "import os\nimport tempfile\nimport zipfile\nfrom pathlib import Path\n\nfrom lfx.base.vectorstores.model import LCVectorStoreComponent, check_cached_vector_store\nfrom lfx.helpers.data import docs_to_data\nfrom lfx.io import (\n    DropdownInput,\n    FileInput,\n    FloatInput,\n    HandleInput,\n    IntInput,\n    SecretStrInput,\n    StrInput,\n)\nfrom lfx.schema.data import Data\nfrom lfx.base.data.storage_utils import parse_storage_path, read_file_bytes\nfrom lfx.services.deps import get_settings_service, get_storage_service\nfrom lfx.utils.async_helpers import run_until_complete\n\n\nclass OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):\n    \"\"\"Oracle Database 23ai vector store with search capabilities.\"\"\"\n\n    display_name: str = \"Oracle Database Vector Store\"\n    description: str = \"Oracle 23ai Vector Store with local embeddings and configurable retrieval\"\n    name = \"OracleDBVector\"\n    icon = \"Oracle\"\n\n    inputs = [\n        StrInput(\n            name=\"db_user\",\n            display_name=\"Database User\",\n            info=\"Oracle database username (e.g., ADMIN)\",\n        ),\n        SecretStrInput(\n            name=\"db_password\",\n            display_name=\"Database Password\",\n            info=\"Oracle database password\",\n        ),\n        StrInput(\n            name=\"dsn\",\n            display_name=\"DSN\",\n            info=\"Database connection string (e.g., CA4X9LQR5QLMO4EB_high)\",\n        ),\n        FileInput(\n            name=\"wallet_file\",\n            display_name=\"Wallet ZIP File\",\n            info=\"Upload Oracle wallet ZIP file\",\n            file_types=[\"zip\"],\n        ),\n        SecretStrInput(\n            name=\"wallet_password\",\n            display_name=\"Wallet Password\",\n            info=\"Oracle wallet password\",\n        ),\n        StrInput(\n            name=\"table_name\",\n            display_name=\"Table Name\",\n            info=\"Vector table name (e.g., PDFCOLLECTION)\",\n            value=\"PDFCOLLECTION\",\n        ),\n        DropdownInput(\n            name=\"distance_strategy\",\n            display_name=\"Distance Strategy\",\n            options=[\"COSINE\", \"EUCLIDEAN_DISTANCE\", \"DOT_PRODUCT\"],\n            value=\"COSINE\",\n            advanced=True,\n        ),\n        *LCVectorStoreComponent.inputs,\n        HandleInput(\n            name=\"embedding\",\n            display_name=\"Embedding Model\",\n            input_types=[\"Embeddings\"],\n        ),\n        IntInput(\n            name=\"number_of_results\",\n            display_name=\"Number of Results\",\n            value=5,\n            advanced=True,\n        ),\n        DropdownInput(\n            name=\"search_type\",\n            display_name=\"Search Type\",\n            options=[\"similarity\", \"mmr\", \"similarity_score_threshold\"],\n            value=\"similarity\",\n            advanced=True,\n        ),\n        FloatInput(\n            name=\"score_threshold\",\n            display_name=\"Score Threshold\",\n            value=0.35,\n            advanced=True,\n        ),\n        IntInput(\n            name=\"fetch_k\",\n            display_name=\"Fetch K\",\n            value=20,\n            advanced=True,\n        ),\n        FloatInput(\n            name=\"mmr_lambda\",\n            display_name=\"MMR Lambda\",\n            value=0.5,\n            advanced=True,\n        ),\n    ]\n\n    def _clean_metadata(self, metadata):\n        \"\"\"Clean metadata to ensure JSON serializability.\"\"\"\n        import json\n\n        if not metadata:\n            return {}\n\n        cleaned = {}\n        for key, value in metadata.items():\n            try:\n                json.dumps(value)\n                cleaned[key] = value\n            except (TypeError, ValueError):\n                cleaned[key] = str(value)\n\n        return cleaned\n\n    def _get_wallet_file_path(self) -> str:\n        \"\"\"업로드된 wallet 파일의 로컬 경로를 가져옵니다. S3 storage인 경우 임시 파일로 다운로드합니다.\"\"\"\n        if not self.wallet_file:\n            raise ValueError(\"Wallet file is required\")\n        \n        settings = get_settings_service().settings\n        \n        # Local storage: 파일 경로를 그대로 사용\n        if settings.storage_type == \"local\":\n            if not os.path.exists(self.wallet_file):\n                raise FileNotFoundError(f\"Wallet file not found: {self.wallet_file}\")\n            return self.wallet_file\n        \n        # S3 storage: 파일을 임시 위치로 다운로드\n        parsed = parse_storage_path(self.wallet_file)\n        if not parsed:\n            raise ValueError(f\"Invalid S3 path format: {self.wallet_file}. Expected 'flow_id/filename'\")\n        \n        storage_service = get_storage_service()\n        flow_id, filename = parsed\n        \n        # S3에서 파일 내용 가져오기\n        content = run_until_complete(storage_service.get_file(flow_id, filename))\n        \n        # 임시 파일로 저장\n        suffix = Path(filename).suffix\n        temp_file = tempfile.NamedTemporaryFile(mode=\"wb\", suffix=suffix, delete=False)\n        try:\n            temp_file.write(content)\n            temp_file.flush()\n            temp_path = temp_file.name\n        finally:\n            temp_file.close()\n        \n        self.log(f\"Downloaded wallet file from S3 to: {temp_path}\")\n        return temp_path\n\n    @check_cached_vector_store\n    def build_vector_store(self):\n        try:\n            import oracledb\n            from langchain_community.vectorstores.oraclevs import OracleVS\n            from langchain_community.vectorstores.utils import DistanceStrategy\n        except ImportError as e:\n            msg = \"Could not import required packages.\"\n            raise ImportError(msg) from e\n\n        # wallet zip 파일 경로 가져오기 (로컬 또는 S3에서 다운로드)\n        wallet_file_path = None\n        temp_wallet_dir = None\n        temp_downloaded_wallet = None\n        \n        try:\n            wallet_file_path = self._get_wallet_file_path()\n            \n            # S3에서 다운로드한 경우 나중에 정리할 수 있도록 추적\n            settings = get_settings_service().settings\n            if settings.storage_type == \"s3\":\n                temp_downloaded_wallet = wallet_file_path\n            \n            # 임시 디렉토리 생성 및 zip 파일 압축 해제\n            temp_wallet_dir = tempfile.mkdtemp(prefix=\"oracle_wallet_\")\n            self.log(f\"Extracting wallet to temporary directory: {temp_wallet_dir}\")\n            \n            with zipfile.ZipFile(wallet_file_path, 'r') as zip_ref:\n                zip_ref.extractall(temp_wallet_dir)\n            \n            self.log(f\"Wallet extracted successfully\")\n            \n        except Exception as e:\n            # 실패 시 임시 파일들 정리\n            if temp_wallet_dir and os.path.exists(temp_wallet_dir):\n                import shutil\n                shutil.rmtree(temp_wallet_dir, ignore_errors=True)\n            if temp_downloaded_wallet and os.path.exists(temp_downloaded_wallet):\n                os.unlink(temp_downloaded_wallet)\n            error_msg = f\"Failed to extract wallet file: {str(e)}\"\n            self.status = error_msg\n            raise RuntimeError(error_msg) from e\n        finally:\n            # S3에서 다운로드한 임시 wallet 파일 정리\n            if temp_downloaded_wallet and os.path.exists(temp_downloaded_wallet):\n                try:\n                    os.unlink(temp_downloaded_wallet)\n                except Exception:\n                    pass\n\n        connect_args = {\n            \"user\": self.db_user,\n            \"password\": self.db_password,\n            \"dsn\": self.dsn,\n            \"config_dir\": temp_wallet_dir,\n            \"wallet_location\": temp_wallet_dir,\n            \"wallet_password\": self.wallet_password,\n        }\n\n        try:\n            conn = oracledb.connect(**connect_args)\n            self.log(f\"Connected to Oracle Database: {self.dsn}\")\n        except Exception as e:\n            # 연결 실패 시 임시 디렉토리 정리\n            if temp_wallet_dir and os.path.exists(temp_wallet_dir):\n                import shutil\n                shutil.rmtree(temp_wallet_dir, ignore_errors=True)\n            error_msg = f\"Failed to connect to Oracle Database: {str(e)}\"\n            self.status = error_msg\n            raise ConnectionError(error_msg) from e\n\n        try:\n            cursor = conn.cursor()\n            cursor.execute(\n                \"SELECT table_name FROM user_tables WHERE UPPER(table_name) = UPPER(:table_name)\",\n                {\"table_name\": self.table_name},\n            )\n            row = cursor.fetchone()\n\n            if not row:\n                # 테이블이 존재하지 않으면 생성\n                self.log(f\"Table '{self.table_name}' does not exist. Creating table...\")\n                try:\n                    # 테이블 생성 SQL\n                    create_table_sql = f\"\"\"\n                    CREATE TABLE {self.db_user}.{self.table_name} (\n                        ID VARCHAR2(100 BYTE),\n                        TEXT CLOB,\n                        METADATA CLOB,\n                        EMBEDDING VECTOR(1024, *),\n                        CREATED_AT TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP\n                    )\n                    \"\"\"\n                    cursor.execute(create_table_sql)\n                    self.log(f\"Table '{self.table_name}' created successfully\")\n                    \n                    # Primary Key 추가\n                    pk_sql = f\"\"\"\n                    ALTER TABLE {self.db_user}.{self.table_name} ADD PRIMARY KEY (ID)\n                    USING INDEX PCTFREE 10 INITRANS 20 MAXTRANS 255\n                    TABLESPACE DATA ENABLE\n                    \"\"\"\n                    cursor.execute(pk_sql)\n                    self.log(f\"Primary key added to '{self.table_name}'\")\n                    \n                    # Vector 인덱스 생성\n                    index_sql = f\"\"\"\n                    CREATE VECTOR INDEX {self.db_user}.VECTOR_IDX_{self.table_name} ON {self.db_user}.{self.table_name} (EMBEDDING)\n                    ORGANIZATION INMEMORY NEIGHBOR GRAPH\n                    WITH DISTANCE COSINE\n                    WITH TARGET ACCURACY 95\n                    \"\"\"\n                    cursor.execute(index_sql)\n                    self.log(f\"Vector index created for '{self.table_name}'\")\n                    \n                    conn.commit()\n                    actual_table_name = self.table_name\n                except Exception as create_error:\n                    conn.rollback()\n                    cursor.close()\n                    error_msg = f\"Failed to create table '{self.table_name}': {str(create_error)}\"\n                    self.status = error_msg\n                    raise RuntimeError(error_msg) from create_error\n            else:\n                actual_table_name = row[0]\n                self.log(f\"Found existing table: {actual_table_name}\")\n            \n            cursor.close()\n        except Exception as e:\n            error_msg = f\"Failed to validate or create table: {str(e)}\"\n            self.status = error_msg\n            raise RuntimeError(error_msg) from e\n\n        ds_map = {\n            \"COSINE\": DistanceStrategy.COSINE,\n            \"EUCLIDEAN_DISTANCE\": DistanceStrategy.EUCLIDEAN_DISTANCE,\n            \"DOT_PRODUCT\": DistanceStrategy.DOT_PRODUCT,\n        }\n        distance = ds_map.get(self.distance_strategy, DistanceStrategy.COSINE)\n\n        oracle_store = OracleVS(\n            client=conn,\n            table_name=actual_table_name,\n            distance_strategy=distance,\n            embedding_function=self.embedding,\n        )\n\n        self.log(f\"Created OracleVS instance for table: {actual_table_name}\")\n\n        self.ingest_data = self._prepare_ingest_data()\n\n        documents = []\n        for _input in self.ingest_data or []:\n            if isinstance(_input, Data):\n                doc = _input.to_lc_document()\n                doc.metadata = self._clean_metadata(doc.metadata)\n                documents.append(doc)\n            else:\n                if hasattr(_input, 'metadata'):\n                    _input.metadata = self._clean_metadata(_input.metadata)\n                documents.append(_input)\n\n        if documents:\n            try:\n                self.log(f\"Ingesting {len(documents)} documents...\")\n                oracle_store.add_documents(documents)\n                success_msg = f\"Successfully added {len(documents)} documents\"\n                self.status = success_msg\n                self.log(success_msg)\n            except Exception as e:\n                error_msg = f\"Failed to add documents: {str(e)}\"\n                self.status = error_msg\n                self.log(error_msg)\n                raise RuntimeError(error_msg) from e\n\n        return oracle_store\n\n    def search_documents(self) -> list[Data]:\n        vector_store = self.build_vector_store()\n\n        if self.search_query and isinstance(self.search_query, str) and self.search_query.strip():\n            query = self.search_query.strip()\n            k = max(1, self.number_of_results or 5)\n\n            self.log(f\"Searching for: {query}\")\n\n            try:\n                if self.search_type == \"similarity\":\n                    kwargs = {}\n                    if self.fetch_k:\n                        kwargs[\"fetch_k\"] = self.fetch_k\n                    docs = vector_store.similarity_search(query=query, k=k, **kwargs)\n\n                elif self.search_type == \"mmr\":\n                    kwargs = {}\n                    if self.fetch_k:\n                        kwargs[\"fetch_k\"] = self.fetch_k\n                    docs = vector_store.max_marginal_relevance_search(\n                        query=query,\n                        k=k,\n                        lambda_mult=self.mmr_lambda,\n                        **kwargs,\n                    )\n\n                elif self.search_type == \"similarity_score_threshold\":\n                    retriever = vector_store.as_retriever(\n                        search_type=\"similarity_score_threshold\",\n                        search_kwargs={\n                            \"k\": k,\n                            \"score_threshold\": self.score_threshold,\n                            **({\"fetch_k\": self.fetch_k} if self.fetch_k else {}),\n                        },\n                    )\n                    docs = retriever.get_relevant_documents(query)\n\n                else:\n                    docs = vector_store.similarity_search(query=query, k=k)\n\n                data = docs_to_data(docs)\n                self.status = data\n                self.log(f\"Found {len(docs)} results\")\n                return data\n\n            except Exception as e:\n                error_msg = f\"Search failed: {str(e)}\"\n                self.status = error_msg\n                self.log(error_msg)\n                return []\n\n        return []"
+              },
+              "db_password": {
+                "_input_type": "SecretStrInput",
+                "advanced": false,
+                "display_name": "Database Password",
+                "dynamic": false,
+                "info": "Oracle database password",
+                "input_types": [],
+                "load_from_db": false,
+                "name": "db_password",
+                "override_skip": false,
+                "password": true,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "track_in_telemetry": false,
+                "type": "str",
+                "value": ""
+              },
+              "db_user": {
+                "_input_type": "StrInput",
+                "advanced": false,
+                "display_name": "Database User",
+                "dynamic": false,
+                "info": "Oracle database username (e.g., ADMIN)",
+                "list": false,
+                "list_add_label": "Add More",
+                "load_from_db": false,
+                "name": "db_user",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": false,
+                "type": "str",
+                "value": "admin"
+              },
+              "distance_strategy": {
+                "_input_type": "DropdownInput",
+                "advanced": true,
+                "combobox": false,
+                "dialog_inputs": {},
+                "display_name": "Distance Strategy",
+                "dynamic": false,
+                "external_options": {},
+                "info": "",
+                "name": "distance_strategy",
+                "options": [
+                  "COSINE",
+                  "EUCLIDEAN_DISTANCE",
+                  "DOT_PRODUCT"
+                ],
+                "options_metadata": [],
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "toggle": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": true,
+                "type": "str",
+                "value": "COSINE"
+              },
+              "dsn": {
+                "_input_type": "StrInput",
+                "advanced": false,
+                "display_name": "DSN",
+                "dynamic": false,
+                "info": "Database connection string (e.g., CA4X9LQR5QLMO4EB_high)",
+                "list": false,
+                "list_add_label": "Add More",
+                "load_from_db": false,
+                "name": "dsn",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": false,
+                "type": "str",
+                "value": "CA4X9LQR5QLMO4EB_high"
+              },
+              "embedding": {
+                "_input_type": "HandleInput",
+                "advanced": false,
+                "display_name": "Embedding Model",
+                "dynamic": false,
+                "info": "",
+                "input_types": [
+                  "Embeddings"
+                ],
+                "list": false,
+                "list_add_label": "Add More",
+                "name": "embedding",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": false,
+                "type": "other",
+                "value": ""
+              },
+              "fetch_k": {
+                "_input_type": "IntInput",
+                "advanced": true,
+                "display_name": "Fetch K",
+                "dynamic": false,
+                "info": "",
+                "list": false,
+                "list_add_label": "Add More",
+                "name": "fetch_k",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": true,
+                "type": "int",
+                "value": 20
+              },
+              "ingest_data": {
+                "_input_type": "HandleInput",
+                "advanced": false,
+                "display_name": "Ingest Data",
+                "dynamic": false,
+                "info": "",
+                "input_types": [
+                  "Data",
+                  "DataFrame"
+                ],
+                "list": true,
+                "list_add_label": "Add More",
+                "name": "ingest_data",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": false,
+                "type": "other",
+                "value": ""
+              },
+              "mmr_lambda": {
+                "_input_type": "FloatInput",
+                "advanced": true,
+                "display_name": "MMR Lambda",
+                "dynamic": false,
+                "info": "",
+                "list": false,
+                "list_add_label": "Add More",
+                "name": "mmr_lambda",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": true,
+                "type": "float",
+                "value": 0.5
+              },
+              "number_of_results": {
+                "_input_type": "IntInput",
+                "advanced": true,
+                "display_name": "Number of Results",
+                "dynamic": false,
+                "info": "",
+                "list": false,
+                "list_add_label": "Add More",
+                "name": "number_of_results",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": true,
+                "type": "int",
+                "value": 5
+              },
+              "score_threshold": {
+                "_input_type": "FloatInput",
+                "advanced": true,
+                "display_name": "Score Threshold",
+                "dynamic": false,
+                "info": "",
+                "list": false,
+                "list_add_label": "Add More",
+                "name": "score_threshold",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": true,
+                "type": "float",
+                "value": 0.35
+              },
+              "search_query": {
+                "_input_type": "QueryInput",
+                "advanced": false,
+                "display_name": "Search Query",
+                "dynamic": false,
+                "info": "Enter a query to run a similarity search.",
+                "input_types": [
+                  "Message"
+                ],
+                "list": false,
+                "list_add_label": "Add More",
+                "load_from_db": false,
+                "name": "search_query",
+                "override_skip": false,
+                "placeholder": "Enter a query...",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": true,
+                "trace_as_input": true,
+                "trace_as_metadata": true,
+                "track_in_telemetry": false,
+                "type": "query",
+                "value": ""
+              },
+              "search_type": {
+                "_input_type": "DropdownInput",
+                "advanced": true,
+                "combobox": false,
+                "dialog_inputs": {},
+                "display_name": "Search Type",
+                "dynamic": false,
+                "external_options": {},
+                "info": "",
+                "name": "search_type",
+                "options": [
+                  "similarity",
+                  "mmr",
+                  "similarity_score_threshold"
+                ],
+                "options_metadata": [],
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "toggle": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": true,
+                "type": "str",
+                "value": "similarity"
+              },
+              "should_cache_vector_store": {
+                "_input_type": "BoolInput",
+                "advanced": true,
+                "display_name": "Cache Vector Store",
+                "dynamic": false,
+                "info": "If True, the vector store will be cached for the current build of the component. This is useful for components that have multiple output methods and want to share the same vector store.",
+                "list": false,
+                "list_add_label": "Add More",
+                "name": "should_cache_vector_store",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": true,
+                "type": "bool",
+                "value": true
+              },
+              "table_name": {
+                "_input_type": "StrInput",
+                "advanced": false,
+                "display_name": "Table Name",
+                "dynamic": false,
+                "info": "Vector table name (e.g., PDFCOLLECTION)",
+                "list": false,
+                "list_add_label": "Add More",
+                "load_from_db": false,
+                "name": "table_name",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": false,
+                "type": "str",
+                "value": "aviate2"
+              },
+              "wallet_file": {
+                "_input_type": "FileInput",
+                "advanced": false,
+                "display_name": "Wallet ZIP File",
+                "dynamic": false,
+                "fileTypes": [
+                  "zip"
+                ],
+                "file_path": "6ab63a55-fb2c-4497-9312-0cda331547af/Wallet_CA4X9LQR5QLMO4EB.zip",
+                "info": "Upload Oracle wallet ZIP file",
+                "list": false,
+                "list_add_label": "Add More",
+                "load_from_db": false,
+                "name": "wallet_file",
+                "override_skip": false,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "temp_file": false,
+                "title_case": false,
+                "tool_mode": false,
+                "trace_as_metadata": true,
+                "track_in_telemetry": false,
+                "type": "file",
+                "value": ""
+              },
+              "wallet_password": {
+                "_input_type": "SecretStrInput",
+                "advanced": false,
+                "display_name": "Wallet Password",
+                "dynamic": false,
+                "info": "Oracle wallet password",
+                "input_types": [],
+                "load_from_db": false,
+                "name": "wallet_password",
+                "override_skip": false,
+                "password": true,
+                "placeholder": "",
+                "required": false,
+                "show": true,
+                "title_case": false,
+                "track_in_telemetry": false,
+                "type": "str",
+                "value": ""
+              }
+            },
+            "tool_mode": false
+          },
+          "selected_output": "search_results",
+          "showNode": true,
+          "type": "OracleDBVector"
+        },
+        "dragging": false,
+        "id": "OracleDBVector-NJNY5",
+        "measured": {
+          "height": 805,
+          "width": 320
+        },
+        "position": {
+          "x": 1245.7569128066484,
+          "y": 409.4751061415279
+        },
+        "selected": false,
+        "type": "genericNode"
       }
     ],
     "viewport": {
-      "x": -454.8263937295942,
-      "y": -771.8679621307401,
-      "zoom": 0.8554646421708041
+      "x": -1074.604201479347,
+      "y": -344.410998063526,
+      "zoom": 1.0022855893019158
     }
   },
   "description": "Load your data for chat context with Retrieval Augmented Generation.",

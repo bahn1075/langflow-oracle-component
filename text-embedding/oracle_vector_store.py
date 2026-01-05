@@ -29,7 +29,7 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
     icon = "Oracle"
 
     inputs = [
-        SecretStrInput(
+        StrInput(
             name="db_user",
             display_name="Database User",
             info="Oracle database username (e.g., ADMIN)",
@@ -39,7 +39,7 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             display_name="Database Password",
             info="Oracle database password",
         ),
-        SecretStrInput(
+        StrInput(
             name="dsn",
             display_name="DSN",
             info="Database connection string (e.g., CA4X9LQR5QLMO4EB_high)",
