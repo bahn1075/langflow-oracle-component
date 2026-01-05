@@ -1,7 +1,13 @@
+import os
+import tempfile
+import zipfile
+from pathlib import Path
+
 from lfx.base.vectorstores.model import LCVectorStoreComponent, check_cached_vector_store
 from lfx.helpers.data import docs_to_data
 from lfx.io import (
     DropdownInput,
+    FileInput,
     FloatInput,
     HandleInput,
     IntInput,
@@ -9,6 +15,9 @@ from lfx.io import (
     StrInput,
 )
 from lfx.schema.data import Data
+from lfx.base.data.storage_utils import parse_storage_path, read_file_bytes
+from lfx.services.deps import get_settings_service, get_storage_service
+from lfx.utils.async_helpers import run_until_complete
 
 
 class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
@@ -35,11 +44,11 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             display_name="DSN",
             info="Database connection string (e.g., CA4X9LQR5QLMO4EB_high)",
         ),
-        SecretStrInput(
-            name="wallet_dir",
-            display_name="Wallet Directory",
-            info="Path to Oracle wallet directory (e.g., /data/wallet)",
-            # value="/data/wallet",
+        FileInput(
+            name="wallet_file",
+            display_name="Wallet ZIP File",
+            info="Upload Oracle wallet ZIP file",
+            file_types=["zip"],
         ),
         SecretStrInput(
             name="wallet_password",
@@ -115,6 +124,43 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
 
         return cleaned
 
+    def _get_wallet_file_path(self) -> str:
+        """업로드된 wallet 파일의 로컬 경로를 가져옵니다. S3 storage인 경우 임시 파일로 다운로드합니다."""
+        if not self.wallet_file:
+            raise ValueError("Wallet file is required")
+        
+        settings = get_settings_service().settings
+        
+        # Local storage: 파일 경로를 그대로 사용
+        if settings.storage_type == "local":
+            if not os.path.exists(self.wallet_file):
+                raise FileNotFoundError(f"Wallet file not found: {self.wallet_file}")
+            return self.wallet_file
+        
+        # S3 storage: 파일을 임시 위치로 다운로드
+        parsed = parse_storage_path(self.wallet_file)
+        if not parsed:
+            raise ValueError(f"Invalid S3 path format: {self.wallet_file}. Expected 'flow_id/filename'")
+        
+        storage_service = get_storage_service()
+        flow_id, filename = parsed
+        
+        # S3에서 파일 내용 가져오기
+        content = run_until_complete(storage_service.get_file(flow_id, filename))
+        
+        # 임시 파일로 저장
+        suffix = Path(filename).suffix
+        temp_file = tempfile.NamedTemporaryFile(mode="wb", suffix=suffix, delete=False)
+        try:
+            temp_file.write(content)
+            temp_file.flush()
+            temp_path = temp_file.name
+        finally:
+            temp_file.close()
+        
+        self.log(f"Downloaded wallet file from S3 to: {temp_path}")
+        return temp_path
+
     @check_cached_vector_store
     def build_vector_store(self):
         try:
@@ -125,12 +171,52 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             msg = "Could not import required packages."
             raise ImportError(msg) from e
 
+        # wallet zip 파일 경로 가져오기 (로컬 또는 S3에서 다운로드)
+        wallet_file_path = None
+        temp_wallet_dir = None
+        temp_downloaded_wallet = None
+        
+        try:
+            wallet_file_path = self._get_wallet_file_path()
+            
+            # S3에서 다운로드한 경우 나중에 정리할 수 있도록 추적
+            settings = get_settings_service().settings
+            if settings.storage_type == "s3":
+                temp_downloaded_wallet = wallet_file_path
+            
+            # 임시 디렉토리 생성 및 zip 파일 압축 해제
+            temp_wallet_dir = tempfile.mkdtemp(prefix="oracle_wallet_")
+            self.log(f"Extracting wallet to temporary directory: {temp_wallet_dir}")
+            
+            with zipfile.ZipFile(wallet_file_path, 'r') as zip_ref:
+                zip_ref.extractall(temp_wallet_dir)
+            
+            self.log(f"Wallet extracted successfully")
+            
+        except Exception as e:
+            # 실패 시 임시 파일들 정리
+            if temp_wallet_dir and os.path.exists(temp_wallet_dir):
+                import shutil
+                shutil.rmtree(temp_wallet_dir, ignore_errors=True)
+            if temp_downloaded_wallet and os.path.exists(temp_downloaded_wallet):
+                os.unlink(temp_downloaded_wallet)
+            error_msg = f"Failed to extract wallet file: {str(e)}"
+            self.status = error_msg
+            raise RuntimeError(error_msg) from e
+        finally:
+            # S3에서 다운로드한 임시 wallet 파일 정리
+            if temp_downloaded_wallet and os.path.exists(temp_downloaded_wallet):
+                try:
+                    os.unlink(temp_downloaded_wallet)
+                except Exception:
+                    pass
+
         connect_args = {
             "user": self.db_user,
             "password": self.db_password,
             "dsn": self.dsn,
-            "config_dir": self.wallet_dir,
-            "wallet_location": self.wallet_dir,
+            "config_dir": temp_wallet_dir,
+            "wallet_location": temp_wallet_dir,
             "wallet_password": self.wallet_password,
         }
 
@@ -138,6 +224,10 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             conn = oracledb.connect(**connect_args)
             self.log(f"Connected to Oracle Database: {self.dsn}")
         except Exception as e:
+            # 연결 실패 시 임시 디렉토리 정리
+            if temp_wallet_dir and os.path.exists(temp_wallet_dir):
+                import shutil
+                shutil.rmtree(temp_wallet_dir, ignore_errors=True)
             error_msg = f"Failed to connect to Oracle Database: {str(e)}"
             self.status = error_msg
             raise ConnectionError(error_msg) from e
