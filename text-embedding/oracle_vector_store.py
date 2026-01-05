@@ -39,7 +39,7 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             name="wallet_dir",
             display_name="Wallet Directory",
             info="Path to Oracle wallet directory (e.g., /data/wallet)",
-            value="/data/wallet",
+            # value="/data/wallet",
         ),
         SecretStrInput(
             name="wallet_password",
@@ -151,16 +151,56 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             row = cursor.fetchone()
 
             if not row:
-                cursor.close()
-                msg = f"Table '{self.table_name}' does not exist."
-                self.status = msg
-                raise RuntimeError(msg)
-
-            actual_table_name = row[0]
+                # 테이블이 존재하지 않으면 생성
+                self.log(f"Table '{self.table_name}' does not exist. Creating table...")
+                try:
+                    # 테이블 생성 SQL
+                    create_table_sql = f"""
+                    CREATE TABLE {self.db_user}.{self.table_name} (
+                        ID VARCHAR2(100 BYTE),
+                        TEXT CLOB,
+                        METADATA CLOB,
+                        EMBEDDING VECTOR(1024, *),
+                        CREATED_AT TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP
+                    )
+                    """
+                    cursor.execute(create_table_sql)
+                    self.log(f"Table '{self.table_name}' created successfully")
+                    
+                    # Primary Key 추가
+                    pk_sql = f"""
+                    ALTER TABLE {self.db_user}.{self.table_name} ADD PRIMARY KEY (ID)
+                    USING INDEX PCTFREE 10 INITRANS 20 MAXTRANS 255
+                    TABLESPACE DATA ENABLE
+                    """
+                    cursor.execute(pk_sql)
+                    self.log(f"Primary key added to '{self.table_name}'")
+                    
+                    # Vector 인덱스 생성
+                    index_sql = f"""
+                    CREATE VECTOR INDEX {self.db_user}.VECTOR_IDX_{self.table_name} ON {self.db_user}.{self.table_name} (EMBEDDING)
+                    ORGANIZATION INMEMORY NEIGHBOR GRAPH
+                    WITH DISTANCE COSINE
+                    WITH TARGET ACCURACY 95
+                    """
+                    cursor.execute(index_sql)
+                    self.log(f"Vector index created for '{self.table_name}'")
+                    
+                    conn.commit()
+                    actual_table_name = self.table_name
+                except Exception as create_error:
+                    conn.rollback()
+                    cursor.close()
+                    error_msg = f"Failed to create table '{self.table_name}': {str(create_error)}"
+                    self.status = error_msg
+                    raise RuntimeError(error_msg) from create_error
+            else:
+                actual_table_name = row[0]
+                self.log(f"Found existing table: {actual_table_name}")
+            
             cursor.close()
-            self.log(f"Found table: {actual_table_name}")
         except Exception as e:
-            error_msg = f"Failed to validate table: {str(e)}"
+            error_msg = f"Failed to validate or create table: {str(e)}"
             self.status = error_msg
             raise RuntimeError(error_msg) from e
 
