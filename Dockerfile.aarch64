@@ -1,16 +1,32 @@
 # Build custom Langflow image with Oracle dependencies
-FROM langflowai/langflow:latest
+# Use build-time platform if provided to avoid constant --platform warnings
+ARG TARGETPLATFORM
+FROM --platform=${TARGETPLATFORM:-linux/arm64} langflowai/langflow:latest
 
-# Install additional Python packages
-RUN pip install --no-cache-dir \
+# Install system dependencies for Docling document processing
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
+    libglib2.0-0 \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+USER 1000
+
+# Install additional Python packages including Docling
+# On aarch64 we try to install a CPU-only PyTorch wheel first (from PyTorch's CPU index)
+# to satisfy sentence-transformers; if not available, continue and let sentence-transformers
+# attempt to resolve its dependencies (the `|| true` prevents build failure here).
+RUN pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu torch || true && \
+    pip install --no-cache-dir \
     oracledb>=2.0.0 \
-    sentence-transformers>=2.2.0
+    sentence-transformers>=2.2.0 \
+    'langflow[docling]'
 
 # Copy custom components
-COPY langflow/langflow-oracle-component/components /app/components
-COPY langflow/langflow-agenticai-oracle-mcp-vector-nl2sql/components /app/components
+COPY docling /app/langflow/components/docling
+COPY text-embedding /app/langflow/components/text-embedding
 
 # Set environment variable for max file upload size (100MB)
 ENV LANGFLOW_MAX_FILE_SIZE_UPLOAD=100
 
-CMD ["python", "-m", "langflow", "run", "--host", "0.0.0.0", "--backend-only"]
+CMD ["python", "-m", "langflow", "run", "--host", "0.0.0.0"]

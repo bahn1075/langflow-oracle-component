@@ -18,7 +18,6 @@ RUN pip install --no-cache-dir \
 
 # Copy custom components
 COPY docling /app/langflow/components/docling
-COPY multi-modal-embedding /app/langflow/components/multi-modal-embedding
 COPY text-embedding /app/langflow/components/text-embedding
 
 # Set environment variable for max file upload size (100MB)
