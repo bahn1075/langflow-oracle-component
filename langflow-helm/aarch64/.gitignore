@@ -1,0 +1,8 @@
+# Ignore files with sensitive credentials
+oracle-db-secret.yaml.local
+*-credentials.yaml
+*.secret.yaml
+
+# Ignore backup files
+*.backup
+*.bak

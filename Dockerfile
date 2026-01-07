@@ -23,4 +23,4 @@ COPY text-embedding /app/langflow/components/text-embedding
 # Set environment variable for max file upload size (100MB)
 ENV LANGFLOW_MAX_FILE_SIZE_UPLOAD=100
 
-CMD ["python", "-m", "langflow", "run", "--host", "0.0.0.0", "--backend-only"]
+CMD ["python", "-m", "langflow", "run", "--host", "0.0.0.0"]

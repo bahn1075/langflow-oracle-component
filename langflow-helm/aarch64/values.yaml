@@ -18,13 +18,16 @@ serviceAccount:
   name: ""
 
 ingress:
-  enabled: true
+  enabled: false
+  className: nginx
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: langflow.64bit.kr
-      paths: []
+      paths:
+        - path: /
+          pathType: Prefix
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -54,7 +57,7 @@ langflow:
   backend:
     replicaCount: 1
     service:
-      type: LoadBalancer
+      type: ClusterIP
       port: 7860
     backendOnly: false
     numWorkers: 1
@@ -68,19 +71,19 @@ langflow:
       - langflow
       - run
       - --host
-      - 0.0.0.0
+      - "0.0.0.0"
     resources:
       requests:
-        cpu: 0.5
+        cpu: 0.2
         memory: 1Gi
       # limits:
       #   cpu: 0.5
       #   memory: 1Gi
     probe:
-      failureThreshold: 3
+      failureThreshold: 10
       periodSeconds: 10
-      timeoutSeconds: 5
-      initialDelaySeconds: 5
+      timeoutSeconds: 10
+      initialDelaySeconds: 60
     env:
       - name: LANGFLOW_PORT
         value: "7860"
@@ -90,6 +93,14 @@ langflow:
         value: "false"
       - name: LANGFLOW_MAX_FILE_SIZE_UPLOAD
         value: "100"  # 100MB
+      - name: LANGFLOW_AUTO_LOGIN
+        value: "false"
+      - name: LANGFLOW_SUPERUSER
+        value: "admin"
+      - name: LANGFLOW_SUPERUSER_PASSWORD
+        value: "admin123"
+      - name: LANGFLOW_NEW_USER_IS_ACTIVE
+        value: "false"
     nodeSelector: {}
     tolerations: []
     affinity: {}
@@ -117,17 +128,19 @@ langflow:
     externalDatabase:
       # Compose in the SQLAlchemy format:
       # https://docs.sqlalchemy.org/en/20/core/engines.html#database-urls
-      enabled: false
-      driver: {}
-        # value: "postgresql"
-      port: {}
-      user: {}
-      password: {}
-        # valueFrom:
-        #   secretKeyRef:
-        #    key: password
-        #    name: <secret-name>
-      database: {}
+      enabled: true
+      driver:
+        value: "postgresql+psycopg"
+      host:
+        value: "postgres-postgresql.postgres.svc.cluster.local"
+      port:
+        value: "5432"
+      user:
+        value: "postgres"
+      password:
+        value: "postgres123"
+      database:
+        value: "postgres"
 
     volumes:
       - name: flows
@@ -154,41 +167,10 @@ langflow:
         readOnly: false
 
     sqlite:
-      enabled: true
-      volume:
-        size: "1Gi"
-        existingStorageClassName: "default"
-        # If you want the chart to create storage classes, then don't set
-        # existingStorageClassName name and provide configuration values
-        # for the storage class. The settings vary based on cloud
-        # provider. Below are examples for AWS, GCP, and Azure.
+      enabled: false
 
-        # For AWS
-        # storageClass:
-        #  provisioner: kubernetes.io/aws-ebs
-        #  type: gp2
-        #  fsType: ext4
-        #  extraParams:
-        #     iopsPerGB: "10"
-
-        # For GCP
-        # storageClass:
-        #   provisioner: kubernetes.io/gce-pd
-        #   type: pd-ssd
-        #   fsType: ext4
-        #   extraParams:
-        #      replication-type: none
-
-        # For Azure
-        # storageClass:
-        #   provisioner: kubernetes.io/azure-disk
-        #   fsType: ext4
-        #   type: managed-premium
-        #   extraParams:
-        #     storageaccounttype: Premium_LRS
-        #     kind: Managed
-        #     cachingmode: ReadOnly
-        storageClass: {}
+  frontend:
+    enabled: false
 
     # autoLogin: true|false
     # superuser: <superuser login>
