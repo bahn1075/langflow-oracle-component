@@ -61,6 +61,13 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             info="Vector table name (e.g., PDFCOLLECTION)",
             value="PDFCOLLECTION",
         ),
+        IntInput(
+            name="embedding_dimension",
+            display_name="Embedding Dimension",
+            info="Embedding vector dimension (e.g., 1024 for Cohere multilingual v3, 1536 for OpenAI, 768 for Titan)",
+            value=1024,
+            advanced=True,
+        ),
         DropdownInput(
             name="distance_strategy",
             display_name="Distance Strategy",
@@ -244,18 +251,22 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
                 # 테이블이 존재하지 않으면 생성
                 self.log(f"Table '{self.table_name}' does not exist. Creating table...")
                 try:
+                    # Embedding dimension 설정 (기본값: 1024)
+                    embed_dim = getattr(self, 'embedding_dimension', 1024)
+                    self.log(f"Using embedding dimension: {embed_dim}")
+
                     # 테이블 생성 SQL
                     create_table_sql = f"""
                     CREATE TABLE {self.db_user}.{self.table_name} (
                         ID VARCHAR2(100 BYTE),
                         TEXT CLOB,
                         METADATA CLOB,
-                        EMBEDDING VECTOR(1024, *),
+                        EMBEDDING VECTOR({embed_dim}, *),
                         CREATED_AT TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP
                     )
                     """
                     cursor.execute(create_table_sql)
-                    self.log(f"Table '{self.table_name}' created successfully")
+                    self.log(f"Table '{self.table_name}' created successfully with dimension {embed_dim}")
                     
                     # Primary Key 추가
                     pk_sql = f"""
@@ -301,14 +312,39 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
         }
         distance = ds_map.get(self.distance_strategy, DistanceStrategy.COSINE)
 
-        oracle_store = OracleVS(
-            client=conn,
-            table_name=actual_table_name,
-            distance_strategy=distance,
-            embedding_function=self.embedding,
-        )
+        # Embedding 모델 검증 (OracleVS 초기화 전에 테스트)
+        try:
+            self.log("Validating embedding model...")
+            test_embedding = self.embedding.embed_query("test")
+            actual_dim = len(test_embedding)
+            expected_dim = getattr(self, 'embedding_dimension', 1024)
 
-        self.log(f"Created OracleVS instance for table: {actual_table_name}")
+            if actual_dim != expected_dim:
+                warning_msg = f"Warning: Embedding dimension mismatch. Expected: {expected_dim}, Got: {actual_dim}"
+                self.log(warning_msg)
+                # 실제 차원으로 업데이트
+                self.embedding_dimension = actual_dim
+
+            self.log(f"Embedding model validated. Dimension: {actual_dim}")
+        except Exception as e:
+            error_msg = f"Failed to validate embedding model. Please check your embedding model configuration: {str(e)}"
+            self.status = error_msg
+            self.log(error_msg)
+            raise RuntimeError(error_msg) from e
+
+        try:
+            oracle_store = OracleVS(
+                client=conn,
+                table_name=actual_table_name,
+                distance_strategy=distance,
+                embedding_function=self.embedding,
+            )
+            self.log(f"Created OracleVS instance for table: {actual_table_name}")
+        except Exception as e:
+            error_msg = f"Failed to create OracleVS instance: {str(e)}"
+            self.status = error_msg
+            self.log(error_msg)
+            raise RuntimeError(error_msg) from e
 
         self.ingest_data = self._prepare_ingest_data()
 

@@ -102,6 +102,26 @@ langflow:
         value: "admin123"
       - name: LANGFLOW_NEW_USER_IS_ACTIVE
         value: "false"
+      - name: PHOENIX_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: phoenix-secret
+            key: PHOENIX_API_KEY
+      - name: OTEL_EXPORTER_OTLP_HEADERS
+        valueFrom:
+          secretKeyRef:
+            name: phoenix-secret
+            key: OTEL_EXPORTER_OTLP_HEADERS
+      - name: PHOENIX_COLLECTOR_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: phoenix-secret
+            key: PHOENIX_COLLECTOR_ENDPOINT
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: phoenix-secret
+            key: OTEL_EXPORTER_OTLP_ENDPOINT
     nodeSelector: {}
     tolerations: []
     affinity: {}
