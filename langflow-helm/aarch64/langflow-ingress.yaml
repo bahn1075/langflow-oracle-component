@@ -1,10 +1,16 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: langflow-service
+  name: langflow-app
   namespace: langflow
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    # Fix 413 Request Entity Too Large error
+    # Matches LANGFLOW_MAX_FILE_SIZE_UPLOAD=100 in values.yaml
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
 spec:
   ingressClassName: nginx
   rules:
@@ -15,6 +21,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: langflow-service-backend
+            name: langflow-app-backend
             port:
               number: 7860

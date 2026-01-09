@@ -1,12 +1,21 @@
 helm repo add langflow https://langflow-ai.github.io/langflow-helm-charts
 helm repo update
 
+# Delete old ingress first (name changed from langflow-service to langflow-app)
+kubectl delete ingress langflow-service -n langflow --ignore-not-found=true
+
+# Upgrade helm release with new service names
 helm upgrade --install langflow langflow/langflow-ide \
   --namespace langflow \
   --create-namespace \
   -f /app/langflow-oracle-component/langflow-helm/aarch64/values.yaml
 
-# Apply custom Ingress (connects to backend service on port 7860)
+# Apply custom Ingress (connects to langflow-app-backend service on port 7860)
+# Includes nginx.ingress.kubernetes.io/proxy-body-size: 100m to fix 413 errors
 kubectl apply -f /app/langflow-oracle-component/langflow-helm/aarch64/langflow-ingress.yaml
+
+# Verify services
+kubectl get svc -n langflow
+kubectl get ingress -n langflow
 
 http://langflow.64bit.kr

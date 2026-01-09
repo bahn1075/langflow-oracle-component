@@ -1,11 +1,12 @@
 imagePullSecrets: []
 
-nameOverride: "langflow-service"
+nameOverride: "langflow"
 # Override for the name of the helm deployment
 # Note: using `langflow` as service name causes
 # env var collision when deploying on openshift
 # https://github.com/langflow-ai/langflow/issues/4330#issuecomment-2459097917
-fullnameOverride: "langflow-service"
+# Using "langflow-app" to avoid collision while keeping it clean
+fullnameOverride: "langflow-app"
 
 serviceAccount:
   # Specifies whether a service account should be created
