@@ -77,9 +77,9 @@ langflow:
       requests:
         cpu: 0.2
         memory: 1Gi
-      # limits:
-      #   cpu: 0.5
-      #   memory: 1Gi
+      limits:
+        cpu: 0.8
+        memory: 3Gi
     probe:
       failureThreshold: 10
       periodSeconds: 10
@@ -122,7 +122,8 @@ langflow:
           secretKeyRef:
             name: phoenix-secret
             key: OTEL_EXPORTER_OTLP_ENDPOINT
-    nodeSelector: {}
+    nodeSelector:
+      kubernetes.io/hostname: "10.0.10.54"
     tolerations: []
     affinity: {}
     podAnnotations:
@@ -164,27 +165,27 @@ langflow:
         value: "postgres"
 
     volumes:
-      - name: flows
-        emptyDir: {}
+      - name: langflow-storage
+        persistentVolumeClaim:
+          claimName: langflow-fss-pvc
       - name: tmp
-        emptyDir: {}
-      - name: data
-        emptyDir: {}
-      - name: db
         emptyDir: {}
 
     volumeMounts:
-      - name: flows
+      - name: langflow-storage
         mountPath: /app/flows
+        subPath: langflow/flows
         readOnly: false
       - name: tmp
         mountPath: /tmp
         readOnly: false
-      - name: data
+      - name: langflow-storage
         mountPath: /app/data
+        subPath: langflow/data
         readOnly: false
-      - name: db
+      - name: langflow-storage
         mountPath: /app/db
+        subPath: langflow/db
         readOnly: false
 
     sqlite:
