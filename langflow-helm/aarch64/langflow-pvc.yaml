@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: langflow-fss-pvc
+  namespace: langflow
+  labels:
+    app: langflow
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ""
+  volumeName: langflow-fss-pv

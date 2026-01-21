@@ -154,7 +154,7 @@ langflow:
       driver:
         value: "postgresql+psycopg"
       host:
-        value: "postgres-postgresql.postgres.svc.cluster.local"
+        value: "postgresql.postgres.svc.cluster.local"
       port:
         value: "5432"
       user:

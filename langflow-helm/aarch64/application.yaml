@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: langflow
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    # Helm 차트 소스 (langflow repo에서 직접)
+    - repoURL: https://langflow-ai.github.io/langflow-helm-charts
+      chart: langflow-ide
+      targetRevision: 0.1.1
+      helm:
+        valueFiles:
+          - $values/langflow-helm/aarch64/values.yaml
+    # Values 파일 소스 (Git repo)
+    - repoURL: https://github.com/bahn1075/langflow-oracle-component.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: langflow
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
