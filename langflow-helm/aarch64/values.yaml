@@ -63,7 +63,7 @@ langflow:
     backendOnly: false
     numWorkers: 1
     image:
-      repository: bahn1075/langflow-custom
+      repository: docker.io/bahn1075/langflow-custom
       imagePullPolicy: IfNotPresent
       tag: aarch64
     command:
