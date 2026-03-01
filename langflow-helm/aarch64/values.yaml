@@ -53,6 +53,10 @@ langflow:
   global:
     image:
       tag: "aarch64"
+  frontend:
+    image:
+      repository: docker.io/langflowai/langflow-frontend
+      tag: latest
   backend:
     replicaCount: 1
     service:
