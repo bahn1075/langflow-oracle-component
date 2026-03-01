@@ -88,6 +88,8 @@ langflow:
       timeoutSeconds: 5
       initialDelaySeconds: 5
     env:
+      - name: LANGFLOW_DATABASE_URL
+        value: "sqlite:////data/langflow.db"
       - name: LANGFLOW_PORT
         value: "7860"
       - name: LANGFLOW_ALEMBIC_LOG_FILE
