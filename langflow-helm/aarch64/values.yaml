@@ -91,8 +91,6 @@ langflow:
       timeoutSeconds: 5
       initialDelaySeconds: 5
     env:
-      - name: LANGFLOW_DATABASE_URL
-        value: "sqlite:////data/langflow.db"
       - name: LANGFLOW_PORT
         value: "7860"
       - name: LANGFLOW_ALEMBIC_LOG_FILE
@@ -126,19 +124,19 @@ langflow:
       runAsGroup: 1000
 
     externalDatabase:
-      # Compose in the SQLAlchemy format:
-      # https://docs.sqlalchemy.org/en/20/core/engines.html#database-urls
-      enabled: false
-      driver: {}
-        # value: "postgresql"
-      port: {}
-      user: {}
-      password: {}
-        # valueFrom:
-        #   secretKeyRef:
-        #    key: password
-        #    name: <secret-name>
-      database: {}
+      enabled: true
+      driver:
+        value: "postgresql"
+      host:
+        value: "postgresql.postgres.svc.cluster.local"
+      port:
+        value: "5432"
+      user:
+        value: "postgres"
+      password:
+        value: "postgres123"
+      database:
+        value: "postgres"
 
     volumes:
       - name: langflow-fss
@@ -160,9 +158,6 @@ langflow:
       - name: langflow-fss
         mountPath: /app/db
         subPath: langflow/db
-      - name: langflow-fss
-        mountPath: /data
-        subPath: langflow/sqlite-data
 
     sqlite:
       enabled: false
