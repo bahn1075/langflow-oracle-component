@@ -47,22 +47,29 @@ if ! docker info 2>/dev/null | grep -q "Username:"; then
   echo "Warning: docker does not appear to be logged in. Please 'docker login' if necessary." >&2
 fi
 
+# Generate date tag (yyyymmdd format)
+DATE_TAG=$(date +%Y%m%d)
+
 ARCH_TAG_FULL="${IMAGE}:${ARCH_TAG}"
+ARCH_DATE_TAG_FULL="${IMAGE}:${ARCH_TAG}-${DATE_TAG}"
 LATEST_TAG_FULL="${IMAGE}:latest"
 
 # Simple cache prune (runs prune commands; errors are tolerated)
 echo "Pruning Docker builder and image caches (simple)..."
 docker builder prune --all --force && docker buildx prune --all --force || true && docker image prune --all --force
 
-# Build the image (two tags: arch-specific and latest)
-echo "Building ${ARCH_TAG_FULL} and ${LATEST_TAG_FULL}..."
-docker build -f "${DOCKERFILE}" -t "${ARCH_TAG_FULL}" -t "${LATEST_TAG_FULL}" . --progress=plain
+# Build the image (three tags: arch-specific, arch-with-date, and latest)
+echo "Building ${ARCH_TAG_FULL}, ${ARCH_DATE_TAG_FULL}, and ${LATEST_TAG_FULL}..."
+docker build -f "${DOCKERFILE}" -t "${ARCH_TAG_FULL}" -t "${ARCH_DATE_TAG_FULL}" -t "${LATEST_TAG_FULL}" . --progress=plain
 
 # Push tags
 echo "Pushing ${ARCH_TAG_FULL}..."
 docker push "${ARCH_TAG_FULL}"
 
+echo "Pushing ${ARCH_DATE_TAG_FULL}..."
+docker push "${ARCH_DATE_TAG_FULL}"
+
 echo "Pushing ${LATEST_TAG_FULL}..."
 docker push "${LATEST_TAG_FULL}"
 
-echo "Done. Pushed tags: ${ARCH_TAG_FULL}, ${LATEST_TAG_FULL}"
+echo "Done. Pushed tags: ${ARCH_TAG_FULL}, ${ARCH_DATE_TAG_FULL}, ${LATEST_TAG_FULL}"

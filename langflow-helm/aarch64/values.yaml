@@ -61,7 +61,7 @@ langflow:
     image:
       repository: bahn1075/langflow-custom
       imagePullPolicy: IfNotPresent
-      tag: aarch64
+      tag: aarch64-20260301
     command:
       - python
       - -m

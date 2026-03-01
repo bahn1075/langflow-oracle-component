@@ -9,8 +9,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     libglib2.0-0 \
     libgomp1 \
+    build-essential \
+    gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
-USER 1000
 
 # Install additional Python packages including Docling
 # On aarch64 we try to install a CPU-only PyTorch wheel first (from PyTorch's CPU index)
@@ -21,6 +23,8 @@ RUN pip install --no-cache-dir --extra-index-url https://download.pytorch.org/wh
     oracledb>=2.0.0 \
     sentence-transformers>=2.2.0 \
     'langflow[docling]'
+
+USER 1000
 
 # Copy custom components
 COPY docling /app/langflow/components/docling
