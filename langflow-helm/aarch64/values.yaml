@@ -24,7 +24,9 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: langflow.64bit.kr
-      paths: []
+      paths:
+        - path: /
+          pathType: Prefix
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
