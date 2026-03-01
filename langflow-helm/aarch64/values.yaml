@@ -136,31 +136,31 @@ langflow:
       database: {}
 
     volumes:
-      - name: flows
-        emptyDir: {}
+      - name: langflow-fss
+        persistentVolumeClaim:
+          claimName: langflow-fss-pvc
       - name: tmp
-        emptyDir: {}
-      - name: data
-        emptyDir: {}
-      - name: db
         emptyDir: {}
 
     volumeMounts:
-      - name: flows
+      - name: langflow-fss
         mountPath: /app/flows
-        readOnly: false
+        subPath: langflow/flows
       - name: tmp
         mountPath: /tmp
         readOnly: false
-      - name: data
+      - name: langflow-fss
         mountPath: /app/data
-        readOnly: false
-      - name: db
+        subPath: langflow/data
+      - name: langflow-fss
         mountPath: /app/db
-        readOnly: false
+        subPath: langflow/db
+      - name: langflow-fss
+        mountPath: /data
+        subPath: langflow/sqlite-data
 
     sqlite:
-      enabled: true
+      enabled: false
       volume:
         size: "1Gi"
         existingStorageClassName: "default"
