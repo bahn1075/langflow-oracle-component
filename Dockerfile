@@ -8,13 +8,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     libgomp1 \
     && rm -rf /var/lib/apt/lists/*
-USER 1000
 
 # Install additional Python packages including Docling
 RUN pip install --no-cache-dir \
     oracledb>=2.0.0 \
     sentence-transformers>=2.2.0 \
     'langflow[docling]'
+
+# Switch back to non-root user
+USER 1000
 
 # Copy custom components
 COPY docling /app/langflow/components/docling
