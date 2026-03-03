@@ -1,0 +1,14 @@
+helm repo add langflow https://langflow-ai.github.io/langflow-helm-charts
+helm repo update
+
+helm upgrade -install langflow langflow/langflow-ide \
+  --namespace langflow \
+  --create-namespace \
+  -f /app/kubernetes/AI/langflow-helm/values.yaml
+
+minikube addons configure metallb
+192.168.49.100 ~ 192.168.49.120
+
+minikube tunnel 필수
+
+이후 svc 에서 확인되는 "langflow-service"의 external ip로 접속하면 웹화면 접속 가능
