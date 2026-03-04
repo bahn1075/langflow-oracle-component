@@ -60,6 +60,7 @@ langflow:
     image:
       repository: docker.io/bahn1075/langflow-frontend-custom
       tag: aarch64-20260304
+      imagePullPolicy: Always
   backend:
     replicaCount: 1
     service:

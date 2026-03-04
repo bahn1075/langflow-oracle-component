@@ -3,8 +3,9 @@
 FROM langflowai/langflow-frontend:latest
 
 # Add custom Nginx configuration to increase upload size limit to 100MB
+# This must be added to nginx.conf at the http level, not just in conf.d
 USER root
-RUN echo 'client_max_body_size 100m;' > /etc/nginx/conf.d/client-max-body-size.conf
+RUN sed -i '/http {/a \    client_max_body_size 100m;' /etc/nginx/nginx.conf
 
 # Switch back to nginx user
 USER 101
