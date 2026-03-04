@@ -2,13 +2,10 @@
 # Always uses the latest official langflow-frontend image as base
 FROM langflowai/langflow-frontend:latest
 
-# Add custom Nginx configuration to increase upload size limit to 100MB
-# The template file is processed by entrypoint, so we need to modify it
-# Also modify the generated config as backup
+# Modify the nginx template file to set client_max_body_size to 100MB
+# The template is processed by entrypoint at container startup to generate /tmp/nginx/default.conf
 USER root
-RUN sed -i 's/${LANGFLOW_MAX_FILE_SIZE_UPLOAD}M/100m/g' /etc/nginx/conf.d/default.conf.template && \
-    sed -i '/http {/a \    client_max_body_size 100m;' /etc/nginx/nginx.conf && \
-    sed -i '/server {/a \    client_max_body_size 100m;' /etc/nginx/conf.d/default.conf || true
+RUN sed -i 's/${LANGFLOW_MAX_FILE_SIZE_UPLOAD}M/100m/g' /etc/nginx/conf.d/default.conf.template
 
 # Switch back to nginx user
 USER 101
