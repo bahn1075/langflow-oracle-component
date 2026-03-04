@@ -60,9 +60,9 @@ langflow:
     backendOnly: false
     numWorkers: 1
     image:
-      repository: langflow-oracle
-      imagePullPolicy: Never
-      tag: latest
+      repository: docker.io/bahn1075/langflow-custom
+      imagePullPolicy: IfNotPresent
+      tag: amd64-20260304
     command:
       - python
       - -m
@@ -204,9 +204,9 @@ langflow:
       type: LoadBalancer
       port: 80
     image:
-      repository: langflow-oracle-frontend
-      imagePullPolicy: Never
-      tag: latest
+      repository: docker.io/bahn1075/langflow-frontend-custom
+      imagePullPolicy: IfNotPresent
+      tag: amd64-20260304
     resources:
       requests:
         cpu: 0.3

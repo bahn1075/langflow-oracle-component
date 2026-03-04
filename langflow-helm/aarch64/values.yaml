@@ -58,8 +58,8 @@ langflow:
       tag: "aarch64"
   frontend:
     image:
-      repository: docker.io/langflowai/langflow-frontend
-      tag: latest
+      repository: docker.io/bahn1075/langflow-frontend-custom
+      tag: aarch64-20260304
   backend:
     replicaCount: 1
     service:
@@ -70,7 +70,7 @@ langflow:
     image:
       repository: docker.io/bahn1075/langflow-custom
       imagePullPolicy: IfNotPresent
-      tag: aarch64-20260301
+      tag: aarch64-20260304
     command:
       - python
       - -m
