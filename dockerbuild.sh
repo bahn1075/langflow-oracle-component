@@ -42,7 +42,7 @@ if ! docker info 2>/dev/null | grep -q "Username:"; then
 fi
 
 # Generate date tag (yyyymmdd format)
-DATE_TAG=$(date +%Y%m%d)
+DATE_TAG=$(date +%Y%m%d-%H%M)
 
 # Simple cache prune
 echo "Pruning Docker builder and image caches..."
