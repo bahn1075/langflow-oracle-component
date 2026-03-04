@@ -59,7 +59,7 @@ langflow:
   frontend:
     image:
       repository: docker.io/bahn1075/langflow-frontend-custom
-      tag: aarch64-20260304-1411
+      tag: aarch64-20260304-1421
       imagePullPolicy: Always
   backend:
     replicaCount: 1
@@ -71,7 +71,7 @@ langflow:
     image:
       repository: docker.io/bahn1075/langflow-custom
       imagePullPolicy: Always
-      tag: aarch64-20260304-1411
+      tag: aarch64-20260304-1421
     command:
       - python
       - -m
