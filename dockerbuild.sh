@@ -41,7 +41,7 @@ if ! docker info 2>/dev/null | grep -q "Username:"; then
   echo "Warning: docker does not appear to be logged in. Please 'docker login' if necessary." >&2
 fi
 
-# Generate date tag (yyyymmdd format)
+# Generate date tag (yyyymmdd-hhmm format)
 DATE_TAG=$(date +%Y%m%d-%H%M)
 
 # Simple cache prune
