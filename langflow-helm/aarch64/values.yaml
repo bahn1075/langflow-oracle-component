@@ -197,9 +197,9 @@ langflow:
         #     cachingmode: ReadOnly
         storageClass: {}
 
-    # autoLogin: true|false
-    # superuser: <superuser login>
-    # superuserPassword: <superuser password>
+    autoLogin: false          # require users to log in before seeing flows
+    superuser: "admin"        # change this to your desired admin username
+    superuserPassword: "changeme"  # set a strong password or handle via secret
     # secretKey: <encryption key, optional>
     # newUserIsActive: true|false
 
