@@ -100,6 +100,8 @@ langflow:
         value: "false"
       - name: LANGFLOW_MAX_FILE_SIZE_UPLOAD
         value: "100"  # 100MB
+      - name: DOCLING_ALLOW_EXTERNAL_PLUGINS
+        value: "true"
     nodeSelector: {}
     tolerations: []
     affinity: {}
