@@ -85,7 +85,7 @@ langflow:
         memory: 1Gi
       limits:
         cpu: 0.5
-        memory: 1Gi
+        memory: 3Gi
     probe:
       failureThreshold: 3
       periodSeconds: 10
