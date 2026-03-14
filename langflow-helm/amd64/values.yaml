@@ -62,7 +62,7 @@ langflow:
     image:
       repository: docker.io/bahn1075/langflow-custom
       imagePullPolicy: IfNotPresent
-      tag: amd64-20260304
+      tag: amd64-20260305-0901
     command:
       - python
       - -m
