@@ -59,7 +59,7 @@ langflow:
   frontend:
     image:
       repository: docker.io/bahn1075/langflow-frontend-custom
-      tag: aarch64-20260304-1532
+      tag: aarch64-20260314-1204
       imagePullPolicy: Always
   backend:
     replicaCount: 1
@@ -71,7 +71,7 @@ langflow:
     image:
       repository: docker.io/bahn1075/langflow-custom
       imagePullPolicy: Always
-      tag: aarch64-20260304-1532
+      tag: aarch64-20260314-1204
     command:
       - python
       - -m
@@ -91,6 +91,9 @@ langflow:
       periodSeconds: 10
       timeoutSeconds: 5
       initialDelaySeconds: 5
+    autoLogin: false
+    superuser: "admin"
+    superuserPassword: "changeme"
     env:
       - name: LANGFLOW_PORT
         value: "7860"
