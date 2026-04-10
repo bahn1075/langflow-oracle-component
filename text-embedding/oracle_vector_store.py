@@ -1,6 +1,7 @@
 import os
 import tempfile
 import zipfile
+from copy import deepcopy
 from pathlib import Path
 
 from lfx.base.vectorstores.model import LCVectorStoreComponent, check_cached_vector_store
@@ -161,6 +162,92 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
         self.log(f"Downloaded wallet file from S3 to: {temp_path}")
         return temp_path
 
+    def _get_embedding_function(self):
+        """Adapt Langflow embedding handles to the interface expected by OracleVS."""
+        from langchain_core.embeddings import Embeddings
+
+        embedding = self.embedding
+        if isinstance(embedding, Embeddings) or callable(embedding):
+            return embedding
+
+        if hasattr(embedding, "embed_documents") and hasattr(embedding, "embed_query"):
+            class EmbeddingAdapter(Embeddings):
+                def __init__(self, wrapped):
+                    self._wrapped = wrapped
+
+                def embed_documents(self, texts):
+                    return self._wrapped.embed_documents(texts)
+
+                def embed_query(self, text):
+                    return self._wrapped.embed_query(text)
+
+            return EmbeddingAdapter(embedding)
+
+        msg = "Embedding model must be callable or implement embed_documents/embed_query."
+        raise TypeError(msg)
+
+    def _split_text_for_embedding(
+        self,
+        text: str,
+        max_chars: int = 200,
+        overlap: int = 40,
+    ) -> list[str]:
+        """Split oversized text into smaller chunks before sending it to Ollama."""
+        if len(text) <= max_chars:
+            return [text]
+
+        chunks = []
+        start = 0
+        text_length = len(text)
+
+        while start < text_length:
+            end = min(start + max_chars, text_length)
+            if end < text_length:
+                for separator in ("\n", ". ", ", ", " "):
+                    split_at = text.rfind(separator, start, end)
+                    if split_at > start:
+                        end = split_at + (1 if separator == "\n" else 0)
+                        break
+
+            chunk = text[start:end].strip()
+            if chunk:
+                chunks.append(chunk)
+
+            if end >= text_length:
+                break
+
+            start = max(end - overlap, start + 1)
+
+        return chunks or [text[:max_chars]]
+
+    def _prepare_documents_for_embedding(self, documents):
+        """Ensure every document stays within the embedding model's context budget."""
+        prepared_documents = []
+
+        for doc in documents:
+            text = getattr(doc, "page_content", "")
+            if not isinstance(text, str) or len(text) <= 200:
+                prepared_documents.append(doc)
+                continue
+
+            split_texts = self._split_text_for_embedding(text)
+            self.log(
+                f"Splitting oversized document from {len(text)} to {len(split_texts)} embedding-safe chunks"
+            )
+
+            for index, split_text in enumerate(split_texts):
+                split_doc = deepcopy(doc)
+                split_doc.page_content = split_text
+                if hasattr(split_doc, "metadata") and isinstance(split_doc.metadata, dict):
+                    split_doc.metadata = {
+                        **split_doc.metadata,
+                        "_chunk_index": index,
+                        "_chunk_total": len(split_texts),
+                    }
+                prepared_documents.append(split_doc)
+
+        return prepared_documents
+
     @check_cached_vector_store
     def build_vector_store(self):
         try:
@@ -305,7 +392,7 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             client=conn,
             table_name=actual_table_name,
             distance_strategy=distance,
-            embedding_function=self.embedding,
+            embedding_function=self._get_embedding_function(),
         )
 
         self.log(f"Created OracleVS instance for table: {actual_table_name}")
@@ -325,6 +412,7 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
 
         if documents:
             try:
+                documents = self._prepare_documents_for_embedding(documents)
                 self.log(f"Ingesting {len(documents)} documents...")
                 oracle_store.add_documents(documents)
                 success_msg = f"Successfully added {len(documents)} documents"
