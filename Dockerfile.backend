@@ -14,9 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install additional Python packages including Docling
 RUN pip install --no-cache-dir \
-    oracledb>=2.0.0 \
-    sentence-transformers>=2.2.0 \
-    'langflow[docling]'
+    oracledb==3.4.2 \
+    sentence-transformers==5.4.0 \
+    'langflow[docling]==1.8.4'
 
 # Switch back to non-root user
 USER 1000
