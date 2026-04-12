@@ -157,6 +157,21 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
         self.log(f"Downloaded wallet file from S3 to: {temp_path}")
         return temp_path
 
+    def _build_connect_args(self, temp_wallet_dir: str) -> dict:
+        """Build connection kwargs with network keepalive for long-running flows."""
+        return {
+            "user": self.db_user,
+            "password": self.db_password,
+            "dsn": self.dsn,
+            "config_dir": temp_wallet_dir,
+            "wallet_location": temp_wallet_dir,
+            "wallet_password": self.wallet_password,
+            "expire_time": 10,
+            "retry_count": 3,
+            "retry_delay": 2,
+            "tcp_connect_timeout": 30.0,
+        }
+
     def _oracle_table_to_data(self, conn, table_name: str, limit: int | None = None) -> list[Data]:
         """Oracle 테이블에서 데이터를 가져와 Data 객체 리스트로 변환합니다 (ChromaDB의 chroma_collection_to_data와 유사)."""
         try:
@@ -275,18 +290,19 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
                 except Exception:
                     pass
 
-        connect_args = {
-            "user": self.db_user,
-            "password": self.db_password,
-            "dsn": self.dsn,
-            "config_dir": temp_wallet_dir,
-            "wallet_location": temp_wallet_dir,
-            "wallet_password": self.wallet_password,
-        }
+        connect_args = self._build_connect_args(temp_wallet_dir)
 
         try:
-            conn = oracledb.connect(**connect_args)
-            self.log(f"Connected to Oracle Database: {self.dsn}")
+            pool = oracledb.create_pool(
+                min=0,
+                max=4,
+                increment=1,
+                ping_interval=60,
+                ping_timeout=30,
+                getmode=oracledb.POOL_GETMODE_WAIT,
+                **connect_args,
+            )
+            self.log(f"Created Oracle connection pool for: {self.dsn}")
         except Exception as e:
             # 연결 실패 시 임시 디렉토리 정리
             if temp_wallet_dir and os.path.exists(temp_wallet_dir):
@@ -297,62 +313,63 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             raise ConnectionError(error_msg) from e
 
         try:
-            cursor = conn.cursor()
-            cursor.execute(
-                "SELECT table_name FROM user_tables WHERE UPPER(table_name) = UPPER(:table_name)",
-                {"table_name": self.table_name},
-            )
-            row = cursor.fetchone()
+            with pool.acquire() as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "SELECT table_name FROM user_tables WHERE UPPER(table_name) = UPPER(:table_name)",
+                    {"table_name": self.table_name},
+                )
+                row = cursor.fetchone()
 
-            if not row:
-                # 테이블이 존재하지 않으면 생성
-                self.log(f"Table '{self.table_name}' does not exist. Creating table...")
-                try:
-                    # 테이블 생성 SQL
-                    create_table_sql = f"""
-                    CREATE TABLE {self.db_user}.{self.table_name} (
-                        ID VARCHAR2(100 BYTE),
-                        TEXT CLOB,
-                        METADATA CLOB,
-                        EMBEDDING VECTOR(1024, *),
-                        CREATED_AT TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP
-                    )
-                    """
-                    cursor.execute(create_table_sql)
-                    self.log(f"Table '{self.table_name}' created successfully")
-                    
-                    # Primary Key 추가
-                    pk_sql = f"""
-                    ALTER TABLE {self.db_user}.{self.table_name} ADD PRIMARY KEY (ID)
-                    USING INDEX PCTFREE 10 INITRANS 20 MAXTRANS 255
-                    TABLESPACE DATA ENABLE
-                    """
-                    cursor.execute(pk_sql)
-                    self.log(f"Primary key added to '{self.table_name}'")
-                    
-                    # Vector 인덱스 생성
-                    index_sql = f"""
-                    CREATE VECTOR INDEX {self.db_user}.VECTOR_IDX_{self.table_name} ON {self.db_user}.{self.table_name} (EMBEDDING)
-                    ORGANIZATION INMEMORY NEIGHBOR GRAPH
-                    WITH DISTANCE COSINE
-                    WITH TARGET ACCURACY 95
-                    """
-                    cursor.execute(index_sql)
-                    self.log(f"Vector index created for '{self.table_name}'")
-                    
-                    conn.commit()
-                    actual_table_name = self.table_name
-                except Exception as create_error:
-                    conn.rollback()
-                    cursor.close()
-                    error_msg = f"Failed to create table '{self.table_name}': {str(create_error)}"
-                    self.status = error_msg
-                    raise RuntimeError(error_msg) from create_error
-            else:
-                actual_table_name = row[0]
-                self.log(f"Found existing table: {actual_table_name}")
-            
-            cursor.close()
+                if not row:
+                    # 테이블이 존재하지 않으면 생성
+                    self.log(f"Table '{self.table_name}' does not exist. Creating table...")
+                    try:
+                        # 테이블 생성 SQL
+                        create_table_sql = f"""
+                        CREATE TABLE {self.db_user}.{self.table_name} (
+                            ID VARCHAR2(100 BYTE),
+                            TEXT CLOB,
+                            METADATA CLOB,
+                            EMBEDDING VECTOR(1024, *),
+                            CREATED_AT TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP
+                        )
+                        """
+                        cursor.execute(create_table_sql)
+                        self.log(f"Table '{self.table_name}' created successfully")
+                        
+                        # Primary Key 추가
+                        pk_sql = f"""
+                        ALTER TABLE {self.db_user}.{self.table_name} ADD PRIMARY KEY (ID)
+                        USING INDEX PCTFREE 10 INITRANS 20 MAXTRANS 255
+                        TABLESPACE DATA ENABLE
+                        """
+                        cursor.execute(pk_sql)
+                        self.log(f"Primary key added to '{self.table_name}'")
+                        
+                        # Vector 인덱스 생성
+                        index_sql = f"""
+                        CREATE VECTOR INDEX {self.db_user}.VECTOR_IDX_{self.table_name} ON {self.db_user}.{self.table_name} (EMBEDDING)
+                        ORGANIZATION INMEMORY NEIGHBOR GRAPH
+                        WITH DISTANCE COSINE
+                        WITH TARGET ACCURACY 95
+                        """
+                        cursor.execute(index_sql)
+                        self.log(f"Vector index created for '{self.table_name}'")
+                        
+                        conn.commit()
+                        actual_table_name = self.table_name
+                    except Exception as create_error:
+                        conn.rollback()
+                        cursor.close()
+                        error_msg = f"Failed to create table '{self.table_name}': {str(create_error)}"
+                        self.status = error_msg
+                        raise RuntimeError(error_msg) from create_error
+                else:
+                    actual_table_name = row[0]
+                    self.log(f"Found existing table: {actual_table_name}")
+                
+                cursor.close()
         except Exception as e:
             error_msg = f"Failed to validate or create table: {str(e)}"
             self.status = error_msg
@@ -366,7 +383,7 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
         distance = ds_map.get(self.distance_strategy, DistanceStrategy.COSINE)
 
         oracle_store = OracleVS(
-            client=conn,
+            client=pool,
             table_name=actual_table_name,
             distance_strategy=distance,
             embedding_function=self._get_embedding_function(),
@@ -375,15 +392,16 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
         self.log(f"Created OracleVS instance for table: {actual_table_name}")
 
         # ChromaDB 스타일: 문서 추가를 별도 메서드로 분리
-        self._add_documents_to_vector_store(oracle_store, conn, actual_table_name)
+        self._add_documents_to_vector_store(oracle_store, pool, actual_table_name)
         
         # ChromaDB 스타일: 상태 업데이트
         limit = int(self.limit) if self.limit is not None and str(self.limit).strip() else None
-        self.status = self._oracle_table_to_data(conn, actual_table_name, limit=limit)
+        with pool.acquire() as conn:
+            self.status = self._oracle_table_to_data(conn, actual_table_name, limit=limit)
         
         return oracle_store
 
-    def _add_documents_to_vector_store(self, vector_store: "OracleVS", conn, table_name: str) -> None:
+    def _add_documents_to_vector_store(self, vector_store: "OracleVS", pool, table_name: str) -> None:
         """Adds documents to the Vector Store (ChromaDB 스타일)."""
         ingest_data: list | Data | "DataFrame" = self.ingest_data
         if not ingest_data:
@@ -398,7 +416,8 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             stored_data = []
         else:
             limit = int(self.limit) if self.limit is not None and str(self.limit).strip() else None
-            stored_data = self._oracle_table_to_data(conn, table_name, limit=limit)
+            with pool.acquire() as conn:
+                stored_data = self._oracle_table_to_data(conn, table_name, limit=limit)
             for value in deepcopy(stored_data):
                 # ID 제거하여 텍스트/메타데이터만으로 비교 (ChromaDB와 동일한 방식)
                 del value.id

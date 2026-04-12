@@ -74,7 +74,7 @@ langflow:
     image:
       repository: docker.io/bahn1075/langflow-custom
       imagePullPolicy: Always
-      tag: aarch64-20260410-2221
+      tag: aarch64-20260412-2235
     command:
       - python
       - -m
