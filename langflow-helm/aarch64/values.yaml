@@ -60,12 +60,14 @@ langflow:
     image:
       tag: "aarch64"
   frontend:
+    revisionHistoryLimit: 4
     image:
       repository: docker.io/bahn1075/langflow-frontend-custom
       tag: aarch64-20260410-2221
       imagePullPolicy: IfNotPresent
   backend:
     replicaCount: 1
+    revisionHistoryLimit: 4
     service:
       type: ClusterIP
       port: 7860
