@@ -2,6 +2,7 @@ import os
 import re
 import tempfile
 import zipfile
+from copy import deepcopy
 from pathlib import Path
 
 from lfx.base.vectorstores.model import LCVectorStoreComponent, check_cached_vector_store
@@ -162,53 +163,6 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
         self.log(f"Downloaded wallet file from S3 to: {temp_path}")
         return temp_path
 
-    def _validate_wallet_dir(self, wallet_dir: str) -> None:
-        required_files = ("tnsnames.ora", "sqlnet.ora")
-        missing = [name for name in required_files if not (Path(wallet_dir) / name).exists()]
-        if missing:
-            raise FileNotFoundError(
-                f"Wallet directory is missing required files: {', '.join(missing)}"
-            )
-
-    def _find_wallet_dir(self, extracted_root: str) -> str:
-        root = Path(extracted_root)
-        candidate_dirs = [root] + [path for path in root.rglob("*") if path.is_dir()]
-
-        for candidate in candidate_dirs:
-            if (candidate / "tnsnames.ora").exists() and (candidate / "sqlnet.ora").exists():
-                return str(candidate)
-
-        raise FileNotFoundError(
-            f"Could not find wallet files under extracted path: {extracted_root}"
-        )
-
-    def _get_wallet_aliases(self, wallet_dir: str) -> dict[str, str]:
-        tnsnames_path = Path(wallet_dir) / "tnsnames.ora"
-        content = tnsnames_path.read_text(encoding="utf-8", errors="ignore")
-        aliases = {}
-        for match in re.finditer(r"(?im)^\s*([A-Za-z0-9_.-]+)\s*=", content):
-            alias = match.group(1).strip()
-            aliases[alias.lower()] = alias
-        return aliases
-
-    def _resolve_dsn(self, wallet_dir: str) -> str:
-        dsn = str(self.dsn).strip()
-        aliases = self._get_wallet_aliases(wallet_dir)
-        if not aliases:
-            raise ValueError("No DSN aliases found in wallet tnsnames.ora")
-
-        resolved = aliases.get(dsn.lower())
-        if resolved:
-            return resolved
-
-        if any(token in dsn for token in ("/", ":", "(", ")")):
-            return dsn
-
-        available = ", ".join(sorted(aliases.values()))
-        raise ValueError(
-            f"DSN '{dsn}' was not found in wallet tnsnames.ora. Available aliases: {available}"
-        )
-
     @check_cached_vector_store
     def build_vector_store(self):
         try:
@@ -261,11 +215,10 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
                 except Exception:
                     pass
 
-        resolved_dsn = self._resolve_dsn(temp_wallet_dir)
         connect_args = {
             "user": self.db_user,
             "password": self.db_password,
-            "dsn": resolved_dsn,
+            "dsn": self.dsn,
             "config_dir": temp_wallet_dir,
             "wallet_location": temp_wallet_dir,
             "wallet_password": self.wallet_password,
@@ -291,62 +244,63 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             raise ConnectionError(error_msg) from e
 
         try:
-            cursor = conn.cursor()
-            cursor.execute(
-                "SELECT table_name FROM user_tables WHERE UPPER(table_name) = UPPER(:table_name)",
-                {"table_name": self.table_name},
-            )
-            row = cursor.fetchone()
+            with pool.acquire() as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "SELECT table_name FROM user_tables WHERE UPPER(table_name) = UPPER(:table_name)",
+                    {"table_name": self.table_name},
+                )
+                row = cursor.fetchone()
 
-            if not row:
-                # 테이블이 존재하지 않으면 생성
-                self.log(f"Table '{self.table_name}' does not exist. Creating table...")
-                try:
-                    # 테이블 생성 SQL
-                    create_table_sql = f"""
-                    CREATE TABLE {self.db_user}.{self.table_name} (
-                        ID VARCHAR2(100 BYTE),
-                        TEXT CLOB,
-                        METADATA CLOB,
-                        EMBEDDING VECTOR(1024, *),
-                        CREATED_AT TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP
-                    )
-                    """
-                    cursor.execute(create_table_sql)
-                    self.log(f"Table '{self.table_name}' created successfully")
-                    
-                    # Primary Key 추가
-                    pk_sql = f"""
-                    ALTER TABLE {self.db_user}.{self.table_name} ADD PRIMARY KEY (ID)
-                    USING INDEX PCTFREE 10 INITRANS 20 MAXTRANS 255
-                    TABLESPACE DATA ENABLE
-                    """
-                    cursor.execute(pk_sql)
-                    self.log(f"Primary key added to '{self.table_name}'")
-                    
-                    # Vector 인덱스 생성
-                    index_sql = f"""
-                    CREATE VECTOR INDEX {self.db_user}.VECTOR_IDX_{self.table_name} ON {self.db_user}.{self.table_name} (EMBEDDING)
-                    ORGANIZATION INMEMORY NEIGHBOR GRAPH
-                    WITH DISTANCE COSINE
-                    WITH TARGET ACCURACY 95
-                    """
-                    cursor.execute(index_sql)
-                    self.log(f"Vector index created for '{self.table_name}'")
-                    
-                    conn.commit()
-                    actual_table_name = self.table_name
-                except Exception as create_error:
-                    conn.rollback()
-                    cursor.close()
-                    error_msg = f"Failed to create table '{self.table_name}': {str(create_error)}"
-                    self.status = error_msg
-                    raise RuntimeError(error_msg) from create_error
-            else:
-                actual_table_name = row[0]
-                self.log(f"Found existing table: {actual_table_name}")
-            
-            cursor.close()
+                if not row:
+                    # 테이블이 존재하지 않으면 생성
+                    self.log(f"Table '{self.table_name}' does not exist. Creating table...")
+                    try:
+                        # 테이블 생성 SQL
+                        create_table_sql = f"""
+                        CREATE TABLE {self.db_user}.{self.table_name} (
+                            ID VARCHAR2(100 BYTE),
+                            TEXT CLOB,
+                            METADATA CLOB,
+                            EMBEDDING VECTOR(1024, *),
+                            CREATED_AT TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP
+                        )
+                        """
+                        cursor.execute(create_table_sql)
+                        self.log(f"Table '{self.table_name}' created successfully")
+                        
+                        # Primary Key 추가
+                        pk_sql = f"""
+                        ALTER TABLE {self.db_user}.{self.table_name} ADD PRIMARY KEY (ID)
+                        USING INDEX PCTFREE 10 INITRANS 20 MAXTRANS 255
+                        TABLESPACE DATA ENABLE
+                        """
+                        cursor.execute(pk_sql)
+                        self.log(f"Primary key added to '{self.table_name}'")
+                        
+                        # Vector 인덱스 생성
+                        index_sql = f"""
+                        CREATE VECTOR INDEX {self.db_user}.VECTOR_IDX_{self.table_name} ON {self.db_user}.{self.table_name} (EMBEDDING)
+                        ORGANIZATION INMEMORY NEIGHBOR GRAPH
+                        WITH DISTANCE COSINE
+                        WITH TARGET ACCURACY 95
+                        """
+                        cursor.execute(index_sql)
+                        self.log(f"Vector index created for '{self.table_name}'")
+                        
+                        conn.commit()
+                        actual_table_name = self.table_name
+                    except Exception as create_error:
+                        conn.rollback()
+                        cursor.close()
+                        error_msg = f"Failed to create table '{self.table_name}': {str(create_error)}"
+                        self.status = error_msg
+                        raise RuntimeError(error_msg) from create_error
+                else:
+                    actual_table_name = row[0]
+                    self.log(f"Found existing table: {actual_table_name}")
+                
+                cursor.close()
         except Exception as e:
             error_msg = f"Failed to validate or create table: {str(e)}"
             self.status = error_msg
@@ -360,10 +314,10 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
         distance = ds_map.get(self.distance_strategy, DistanceStrategy.COSINE)
 
         oracle_store = OracleVS(
-            client=conn,
+            client=pool,
             table_name=actual_table_name,
             distance_strategy=distance,
-            embedding_function=self.embedding,
+            embedding_function=self._get_embedding_function(),
         )
 
         self.log(f"Created OracleVS instance for table: {actual_table_name}")
@@ -383,6 +337,7 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
 
         if documents:
             try:
+                documents = self._prepare_documents_for_embedding(documents)
                 self.log(f"Ingesting {len(documents)} documents...")
                 oracle_store.add_documents(documents)
                 success_msg = f"Successfully added {len(documents)} documents"
