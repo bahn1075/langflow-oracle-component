@@ -1,4 +1,5 @@
 import os
+import re
 import tempfile
 import zipfile
 from copy import deepcopy
@@ -157,6 +158,53 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
         self.log(f"Downloaded wallet file from S3 to: {temp_path}")
         return temp_path
 
+    def _validate_wallet_dir(self, wallet_dir: str) -> None:
+        required_files = ("tnsnames.ora", "sqlnet.ora")
+        missing = [name for name in required_files if not (Path(wallet_dir) / name).exists()]
+        if missing:
+            raise FileNotFoundError(
+                f"Wallet directory is missing required files: {', '.join(missing)}"
+            )
+
+    def _find_wallet_dir(self, extracted_root: str) -> str:
+        root = Path(extracted_root)
+        candidate_dirs = [root] + [path for path in root.rglob("*") if path.is_dir()]
+
+        for candidate in candidate_dirs:
+            if (candidate / "tnsnames.ora").exists() and (candidate / "sqlnet.ora").exists():
+                return str(candidate)
+
+        raise FileNotFoundError(
+            f"Could not find wallet files under extracted path: {extracted_root}"
+        )
+
+    def _get_wallet_aliases(self, wallet_dir: str) -> dict[str, str]:
+        tnsnames_path = Path(wallet_dir) / "tnsnames.ora"
+        content = tnsnames_path.read_text(encoding="utf-8", errors="ignore")
+        aliases = {}
+        for match in re.finditer(r"(?im)^\s*([A-Za-z0-9_.-]+)\s*=", content):
+            alias = match.group(1).strip()
+            aliases[alias.lower()] = alias
+        return aliases
+
+    def _resolve_dsn(self, wallet_dir: str) -> str:
+        dsn = str(self.dsn).strip()
+        aliases = self._get_wallet_aliases(wallet_dir)
+        if not aliases:
+            raise ValueError("No DSN aliases found in wallet tnsnames.ora")
+
+        resolved = aliases.get(dsn.lower())
+        if resolved:
+            return resolved
+
+        if any(token in dsn for token in ("/", ":", "(", ")")):
+            return dsn
+
+        available = ", ".join(sorted(aliases.values()))
+        raise ValueError(
+            f"DSN '{dsn}' was not found in wallet tnsnames.ora. Available aliases: {available}"
+        )
+
     def _oracle_table_to_data(self, conn, table_name: str, limit: int | None = None) -> list[Data]:
         """Oracle 테이블에서 데이터를 가져와 Data 객체 리스트로 변환합니다 (ChromaDB의 chroma_collection_to_data와 유사)."""
         try:
@@ -231,7 +279,9 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             with zipfile.ZipFile(wallet_file_path, 'r') as zip_ref:
                 zip_ref.extractall(temp_wallet_dir)
             
-            self.log(f"Wallet extracted successfully")
+            temp_wallet_dir = self._find_wallet_dir(temp_wallet_dir)
+            self._validate_wallet_dir(temp_wallet_dir)
+            self.log(f"Wallet extracted successfully: {temp_wallet_dir}")
             
         except Exception as e:
             # 실패 시 임시 파일들 정리
@@ -251,10 +301,11 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
                 except Exception:
                     pass
 
+        resolved_dsn = self._resolve_dsn(temp_wallet_dir)
         connect_args = {
             "user": self.db_user,
             "password": self.db_password,
-            "dsn": self.dsn,
+            "dsn": resolved_dsn,
             "config_dir": temp_wallet_dir,
             "wallet_location": temp_wallet_dir,
             "wallet_password": self.wallet_password,
@@ -268,7 +319,14 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             if temp_wallet_dir and os.path.exists(temp_wallet_dir):
                 import shutil
                 shutil.rmtree(temp_wallet_dir, ignore_errors=True)
-            error_msg = f"Failed to connect to Oracle Database: {str(e)}"
+            msg = str(e)
+            if "DPY-6000" in msg or "ORA-12506" in msg:
+                aliases = ", ".join(sorted(self._get_wallet_aliases(temp_wallet_dir).values()))
+                msg = (
+                    f"{msg}. Listener reached but rejected the requested service. "
+                    f"Use one of the wallet aliases from tnsnames.ora for DSN: {aliases}"
+                )
+            error_msg = f"Failed to connect to Oracle Database: {msg}"
             self.status = error_msg
             raise ConnectionError(error_msg) from e
 
