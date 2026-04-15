@@ -7,18 +7,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     libglib2.0-0 \
     libgomp1 \
+    build-essential \
+    gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
-USER 1000
 
 # Install additional Python packages including Docling
 RUN pip install --no-cache-dir \
-    oracledb>=2.0.0 \
-    sentence-transformers>=2.2.0 \
-    'langflow[docling]'
+    oracledb==3.4.2 \
+    sentence-transformers==5.4.0 \
+    'langflow[docling]==1.8.4'
+
+# Switch back to non-root user
+USER 1000
 
 # Copy custom components
 COPY docling /app/langflow/components/docling
-COPY multi-modal-embedding /app/langflow/components/multi-modal-embedding
 COPY text-embedding /app/langflow/components/text-embedding
 
 # Set environment variable for max file upload size (100MB)

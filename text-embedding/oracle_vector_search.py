@@ -115,6 +115,30 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
 
         return cleaned
 
+    def _get_embedding_function(self):
+        """Adapt Langflow embedding handles to the interface expected by OracleVS."""
+        from langchain_core.embeddings import Embeddings
+
+        embedding = self.embedding
+        if isinstance(embedding, Embeddings) or callable(embedding):
+            return embedding
+
+        if hasattr(embedding, "embed_documents") and hasattr(embedding, "embed_query"):
+            class EmbeddingAdapter(Embeddings):
+                def __init__(self, wrapped):
+                    self._wrapped = wrapped
+
+                def embed_documents(self, texts):
+                    return self._wrapped.embed_documents(texts)
+
+                def embed_query(self, text):
+                    return self._wrapped.embed_query(text)
+
+            return EmbeddingAdapter(embedding)
+
+        msg = "Embedding model must be callable or implement embed_documents/embed_query."
+        raise TypeError(msg)
+
     @check_cached_vector_store
     def build_vector_store(self):
         try:
@@ -175,7 +199,7 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             client=conn,
             table_name=actual_table_name,
             distance_strategy=distance,
-            embedding_function=self.embedding,
+            embedding_function=self._get_embedding_function(),
         )
 
         self.log(f"Created OracleVS instance for table: {actual_table_name}")
