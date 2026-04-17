@@ -145,7 +145,10 @@ langflow:
       user:
         value: "postgres"
       password:
-        value: "postgres123"
+        valueFrom:
+          secretKeyRef:
+            name: langflow-secret
+            key: POSTGRES_LANGFLOW_PASSWORD
       database:
         value: "postgres"
 
