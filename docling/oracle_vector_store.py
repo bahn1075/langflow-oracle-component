@@ -120,31 +120,21 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
 
         return cleaned
 
-    def _get_wallet_file_path(self) -> str:
-        """업로드된 wallet 파일의 로컬 경로를 가져옵니다. S3 storage인 경우 임시 파일로 다운로드합니다."""
-        if not self.wallet_file:
-            raise ValueError("Wallet file is required")
-        
-        settings = get_settings_service().settings
-        
-        # Local storage: 파일 경로를 그대로 사용
-        if settings.storage_type == "local":
-            if not os.path.exists(self.wallet_file):
-                raise FileNotFoundError(f"Wallet file not found: {self.wallet_file}")
-            return self.wallet_file
-        
-        # S3 storage: 파일을 임시 위치로 다운로드
-        parsed = parse_storage_path(self.wallet_file)
-        if not parsed:
-            raise ValueError(f"Invalid S3 path format: {self.wallet_file}. Expected 'flow_id/filename'")
-        
+    def _parse_wallet_storage_path(self) -> tuple[str, str] | None:
+        parsed = parse_storage_path(str(self.wallet_file))
+        if parsed:
+            return parsed
+
+        wallet_path = Path(str(self.wallet_file))
+        if len(wallet_path.parts) >= 2:
+            return wallet_path.parent.name, wallet_path.name
+
+        return None
+
+    def _download_wallet_file(self, flow_id: str, filename: str) -> str:
         storage_service = get_storage_service()
-        flow_id, filename = parsed
-        
-        # S3에서 파일 내용 가져오기
         content = run_until_complete(storage_service.get_file(flow_id, filename))
-        
-        # 임시 파일로 저장
+
         suffix = Path(filename).suffix
         temp_file = tempfile.NamedTemporaryFile(mode="wb", suffix=suffix, delete=False)
         try:
@@ -153,9 +143,36 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             temp_path = temp_file.name
         finally:
             temp_file.close()
-        
-        self.log(f"Downloaded wallet file from S3 to: {temp_path}")
+
+        self.log(f"Downloaded wallet file to temporary path: {temp_path}")
         return temp_path
+
+    def _get_wallet_file_path(self) -> tuple[str, bool]:
+        """업로드된 wallet 파일의 로컬 경로를 가져옵니다. S3 storage인 경우 임시 파일로 다운로드합니다."""
+        if not self.wallet_file:
+            raise ValueError("Wallet file is required")
+        
+        settings = get_settings_service().settings
+        
+        # Local storage: 파일 경로를 그대로 사용
+        if settings.storage_type == "local":
+            if os.path.exists(self.wallet_file):
+                return self.wallet_file, False
+
+            parsed = self._parse_wallet_storage_path()
+            if not parsed:
+                raise FileNotFoundError(f"Wallet file not found: {self.wallet_file}")
+
+            flow_id, filename = parsed
+            return self._download_wallet_file(flow_id, filename), True
+        
+        # S3 storage: 파일을 임시 위치로 다운로드
+        parsed = self._parse_wallet_storage_path()
+        if not parsed:
+            raise ValueError(f"Invalid S3 path format: {self.wallet_file}. Expected 'flow_id/filename'")
+        
+        flow_id, filename = parsed
+        return self._download_wallet_file(flow_id, filename), True
 
     def _build_connect_args(self, temp_wallet_dir: str) -> dict:
         """Build connection kwargs with network keepalive for long-running flows."""
@@ -256,11 +273,10 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
         temp_downloaded_wallet = None
         
         try:
-            wallet_file_path = self._get_wallet_file_path()
+            wallet_file_path, is_temp_wallet = self._get_wallet_file_path()
             
-            # S3에서 다운로드한 경우 나중에
-            settings = get_settings_service().settings
-            if settings.storage_type == "s3":
+            # storage service에서 다운로드한 경우 나중에
+            if is_temp_wallet:
                 temp_downloaded_wallet = wallet_file_path
             
             # 임시 디렉토리 생성 및 zip 파일 압축 해제

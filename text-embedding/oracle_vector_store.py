@@ -1,11 +1,12 @@
 import os
 import re
+import shutil
 import tempfile
 import zipfile
-from copy import deepcopy
 from pathlib import Path
 
 from lfx.base.vectorstores.model import LCVectorStoreComponent, check_cached_vector_store
+from lfx.base.data.storage_utils import parse_storage_path
 from lfx.helpers.data import docs_to_data
 from lfx.io import (
     DropdownInput,
@@ -17,7 +18,6 @@ from lfx.io import (
     StrInput,
 )
 from lfx.schema.data import Data
-from lfx.base.data.storage_utils import parse_storage_path, read_file_bytes
 from lfx.services.deps import get_settings_service, get_storage_service
 from lfx.utils.async_helpers import run_until_complete
 
@@ -44,7 +44,7 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
         StrInput(
             name="dsn",
             display_name="DSN",
-            info="Database connection string (e.g., CA4X9LQR5QLMO4EB_high)",
+            info="Database connection string (e.g., ca4x9lqr5qlmo4eb_high)",
         ),
         FileInput(
             name="wallet_file",
@@ -110,7 +110,6 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
     ]
 
     def _clean_metadata(self, metadata):
-        """Clean metadata to ensure JSON serializability."""
         import json
 
         if not metadata:
@@ -126,31 +125,21 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
 
         return cleaned
 
-    def _get_wallet_file_path(self) -> str:
-        """업로드된 wallet 파일의 로컬 경로를 가져옵니다. S3 storage인 경우 임시 파일로 다운로드합니다."""
-        if not self.wallet_file:
-            raise ValueError("Wallet file is required")
-        
-        settings = get_settings_service().settings
-        
-        # Local storage: 파일 경로를 그대로 사용
-        if settings.storage_type == "local":
-            if not os.path.exists(self.wallet_file):
-                raise FileNotFoundError(f"Wallet file not found: {self.wallet_file}")
-            return self.wallet_file
-        
-        # S3 storage: 파일을 임시 위치로 다운로드
-        parsed = parse_storage_path(self.wallet_file)
-        if not parsed:
-            raise ValueError(f"Invalid S3 path format: {self.wallet_file}. Expected 'flow_id/filename'")
-        
+    def _parse_wallet_storage_path(self) -> tuple[str, str] | None:
+        parsed = parse_storage_path(str(self.wallet_file))
+        if parsed:
+            return parsed
+
+        wallet_path = Path(str(self.wallet_file))
+        if len(wallet_path.parts) >= 2:
+            return wallet_path.parent.name, wallet_path.name
+
+        return None
+
+    def _download_wallet_file(self, flow_id: str, filename: str) -> str:
         storage_service = get_storage_service()
-        flow_id, filename = parsed
-        
-        # S3에서 파일 내용 가져오기
         content = run_until_complete(storage_service.get_file(flow_id, filename))
-        
-        # 임시 파일로 저장
+
         suffix = Path(filename).suffix
         temp_file = tempfile.NamedTemporaryFile(mode="wb", suffix=suffix, delete=False)
         try:
@@ -159,9 +148,82 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             temp_path = temp_file.name
         finally:
             temp_file.close()
-        
-        self.log(f"Downloaded wallet file from S3 to: {temp_path}")
+
+        self.log(f"Downloaded wallet file to temporary path: {temp_path}")
         return temp_path
+
+    def _get_wallet_file_path(self) -> tuple[str, bool]:
+        if not self.wallet_file:
+            raise ValueError("Wallet file is required")
+
+        settings = get_settings_service().settings
+
+        if settings.storage_type == "local":
+            if os.path.exists(self.wallet_file):
+                return str(self.wallet_file), False
+
+            parsed = self._parse_wallet_storage_path()
+            if not parsed:
+                raise FileNotFoundError(f"Wallet file not found: {self.wallet_file}")
+
+            flow_id, filename = parsed
+            return self._download_wallet_file(flow_id, filename), True
+
+        parsed = self._parse_wallet_storage_path()
+        if not parsed:
+            raise ValueError(
+                f"Invalid S3 path format: {self.wallet_file}. Expected 'flow_id/filename'"
+            )
+
+        flow_id, filename = parsed
+        return self._download_wallet_file(flow_id, filename), True
+
+    def _find_wallet_dir(self, extracted_root: str) -> str:
+        root = Path(extracted_root)
+        candidate_dirs = [root] + [path for path in root.rglob("*") if path.is_dir()]
+
+        for candidate in candidate_dirs:
+            if (candidate / "tnsnames.ora").exists() and (candidate / "sqlnet.ora").exists():
+                return str(candidate)
+
+        raise FileNotFoundError(
+            f"Could not find wallet files under extracted path: {extracted_root}"
+        )
+
+    def _validate_wallet_dir(self, wallet_dir: str) -> None:
+        required_files = ("tnsnames.ora", "sqlnet.ora")
+        missing = [name for name in required_files if not (Path(wallet_dir) / name).exists()]
+        if missing:
+            raise FileNotFoundError(
+                f"Wallet directory is missing required files: {', '.join(missing)}"
+            )
+
+    def _get_wallet_aliases(self, wallet_dir: str) -> dict[str, str]:
+        tnsnames_path = Path(wallet_dir) / "tnsnames.ora"
+        content = tnsnames_path.read_text(encoding="utf-8", errors="ignore")
+        aliases = {}
+        for match in re.finditer(r"(?im)^\s*([A-Za-z0-9_.-]+)\s*=", content):
+            alias = match.group(1).strip()
+            aliases[alias.lower()] = alias
+        return aliases
+
+    def _resolve_dsn(self, wallet_dir: str) -> str:
+        dsn = str(self.dsn).strip()
+        aliases = self._get_wallet_aliases(wallet_dir)
+        if not aliases:
+            raise ValueError("No DSN aliases found in wallet tnsnames.ora")
+
+        resolved = aliases.get(dsn.lower())
+        if resolved:
+            return resolved
+
+        if any(token in dsn for token in ("/", ":", "(", ")")):
+            return dsn
+
+        available = ", ".join(sorted(aliases.values()))
+        raise ValueError(
+            f"DSN '{dsn}' was not found in wallet tnsnames.ora. Available aliases: {available}"
+        )
 
     @check_cached_vector_store
     def build_vector_store(self):
@@ -170,55 +232,48 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
             from langchain_community.vectorstores.oraclevs import OracleVS
             from langchain_community.vectorstores.utils import DistanceStrategy
         except ImportError as e:
-            msg = "Could not import required packages."
-            raise ImportError(msg) from e
+            raise ImportError("Could not import required packages.") from e
 
-        # wallet zip 파일 경로 가져오기 (로컬 또는 S3에서 다운로드)
         wallet_file_path = None
+        temp_wallet_root = None
         temp_wallet_dir = None
         temp_downloaded_wallet = None
-        
+
         try:
-            wallet_file_path = self._get_wallet_file_path()
-            
-            # S3에서 다운로드한 경우 나중에 정리할 수 있도록 추적
-            settings = get_settings_service().settings
-            if settings.storage_type == "s3":
+            wallet_file_path, is_temp_wallet = self._get_wallet_file_path()
+            if is_temp_wallet:
                 temp_downloaded_wallet = wallet_file_path
-            
-            # 임시 디렉토리 생성 및 zip 파일 압축 해제
-            temp_wallet_dir = tempfile.mkdtemp(prefix="oracle_wallet_")
-            self.log(f"Extracting wallet to temporary directory: {temp_wallet_dir}")
-            
-            with zipfile.ZipFile(wallet_file_path, 'r') as zip_ref:
-                zip_ref.extractall(temp_wallet_dir)
-            
-            temp_wallet_dir = self._find_wallet_dir(temp_wallet_dir)
+
+            temp_wallet_root = tempfile.mkdtemp(prefix="oracle_wallet_")
+            self.log(f"Extracting wallet to temporary directory: {temp_wallet_root}")
+
+            with zipfile.ZipFile(wallet_file_path, "r") as zip_ref:
+                zip_ref.extractall(temp_wallet_root)
+
+            temp_wallet_dir = self._find_wallet_dir(temp_wallet_root)
             self._validate_wallet_dir(temp_wallet_dir)
             self.log(f"Wallet extracted successfully: {temp_wallet_dir}")
-            
+
         except Exception as e:
-            # 실패 시 임시 파일들 정리
-            if temp_wallet_dir and os.path.exists(temp_wallet_dir):
-                import shutil
-                shutil.rmtree(temp_wallet_dir, ignore_errors=True)
+            if temp_wallet_root and os.path.exists(temp_wallet_root):
+                shutil.rmtree(temp_wallet_root, ignore_errors=True)
             if temp_downloaded_wallet and os.path.exists(temp_downloaded_wallet):
                 os.unlink(temp_downloaded_wallet)
             error_msg = f"Failed to extract wallet file: {str(e)}"
             self.status = error_msg
             raise RuntimeError(error_msg) from e
         finally:
-            # S3에서 다운로드한 임시 wallet 파일 정리
             if temp_downloaded_wallet and os.path.exists(temp_downloaded_wallet):
                 try:
                     os.unlink(temp_downloaded_wallet)
                 except Exception:
                     pass
 
+        resolved_dsn = self._resolve_dsn(temp_wallet_dir)
         connect_args = {
             "user": self.db_user,
             "password": self.db_password,
-            "dsn": self.dsn,
+            "dsn": resolved_dsn,
             "config_dir": temp_wallet_dir,
             "wallet_location": temp_wallet_dir,
             "wallet_password": self.wallet_password,
@@ -226,12 +281,8 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
 
         try:
             conn = oracledb.connect(**connect_args)
-            self.log(f"Connected to Oracle Database: {self.dsn}")
+            self.log(f"Connected to Oracle Database: {resolved_dsn}")
         except Exception as e:
-            # 연결 실패 시 임시 디렉토리 정리
-            if temp_wallet_dir and os.path.exists(temp_wallet_dir):
-                import shutil
-                shutil.rmtree(temp_wallet_dir, ignore_errors=True)
             msg = str(e)
             if "DPY-6000" in msg or "ORA-12506" in msg:
                 aliases = ", ".join(sorted(self._get_wallet_aliases(temp_wallet_dir).values()))
@@ -239,68 +290,66 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
                     f"{msg}. Listener reached but rejected the requested service. "
                     f"Use one of the wallet aliases from tnsnames.ora for DSN: {aliases}"
                 )
+            if temp_wallet_root and os.path.exists(temp_wallet_root):
+                shutil.rmtree(temp_wallet_root, ignore_errors=True)
             error_msg = f"Failed to connect to Oracle Database: {msg}"
             self.status = error_msg
             raise ConnectionError(error_msg) from e
 
         try:
-            with pool.acquire() as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    "SELECT table_name FROM user_tables WHERE UPPER(table_name) = UPPER(:table_name)",
-                    {"table_name": self.table_name},
-                )
-                row = cursor.fetchone()
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT table_name FROM user_tables WHERE UPPER(table_name) = UPPER(:table_name)",
+                {"table_name": self.table_name},
+            )
+            row = cursor.fetchone()
 
-                if not row:
-                    # 테이블이 존재하지 않으면 생성
-                    self.log(f"Table '{self.table_name}' does not exist. Creating table...")
-                    try:
-                        # 테이블 생성 SQL
-                        create_table_sql = f"""
-                        CREATE TABLE {self.db_user}.{self.table_name} (
-                            ID VARCHAR2(100 BYTE),
-                            TEXT CLOB,
-                            METADATA CLOB,
-                            EMBEDDING VECTOR(1024, *),
-                            CREATED_AT TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP
-                        )
-                        """
-                        cursor.execute(create_table_sql)
-                        self.log(f"Table '{self.table_name}' created successfully")
-                        
-                        # Primary Key 추가
-                        pk_sql = f"""
-                        ALTER TABLE {self.db_user}.{self.table_name} ADD PRIMARY KEY (ID)
-                        USING INDEX PCTFREE 10 INITRANS 20 MAXTRANS 255
-                        TABLESPACE DATA ENABLE
-                        """
-                        cursor.execute(pk_sql)
-                        self.log(f"Primary key added to '{self.table_name}'")
-                        
-                        # Vector 인덱스 생성
-                        index_sql = f"""
-                        CREATE VECTOR INDEX {self.db_user}.VECTOR_IDX_{self.table_name} ON {self.db_user}.{self.table_name} (EMBEDDING)
-                        ORGANIZATION INMEMORY NEIGHBOR GRAPH
-                        WITH DISTANCE COSINE
-                        WITH TARGET ACCURACY 95
-                        """
-                        cursor.execute(index_sql)
-                        self.log(f"Vector index created for '{self.table_name}'")
-                        
-                        conn.commit()
-                        actual_table_name = self.table_name
-                    except Exception as create_error:
-                        conn.rollback()
-                        cursor.close()
-                        error_msg = f"Failed to create table '{self.table_name}': {str(create_error)}"
-                        self.status = error_msg
-                        raise RuntimeError(error_msg) from create_error
-                else:
-                    actual_table_name = row[0]
-                    self.log(f"Found existing table: {actual_table_name}")
-                
-                cursor.close()
+            if not row:
+                self.log(f"Table '{self.table_name}' does not exist. Creating table...")
+                try:
+                    create_table_sql = f"""
+                    CREATE TABLE {self.db_user}.{self.table_name} (
+                        ID VARCHAR2(100 BYTE),
+                        TEXT CLOB,
+                        METADATA CLOB,
+                        EMBEDDING VECTOR(1024, *),
+                        CREATED_AT TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP
+                    )
+                    """
+                    cursor.execute(create_table_sql)
+                    self.log(f"Table '{self.table_name}' created successfully")
+
+                    pk_sql = f"""
+                    ALTER TABLE {self.db_user}.{self.table_name} ADD PRIMARY KEY (ID)
+                    USING INDEX PCTFREE 10 INITRANS 20 MAXTRANS 255
+                    TABLESPACE DATA ENABLE
+                    """
+                    cursor.execute(pk_sql)
+                    self.log(f"Primary key added to '{self.table_name}'")
+
+                    index_sql = f"""
+                    CREATE VECTOR INDEX {self.db_user}.VECTOR_IDX_{self.table_name}
+                    ON {self.db_user}.{self.table_name} (EMBEDDING)
+                    ORGANIZATION INMEMORY NEIGHBOR GRAPH
+                    WITH DISTANCE COSINE
+                    WITH TARGET ACCURACY 95
+                    """
+                    cursor.execute(index_sql)
+                    self.log(f"Vector index created for '{self.table_name}'")
+
+                    conn.commit()
+                    actual_table_name = self.table_name
+                except Exception as create_error:
+                    conn.rollback()
+                    cursor.close()
+                    error_msg = f"Failed to create table '{self.table_name}': {str(create_error)}"
+                    self.status = error_msg
+                    raise RuntimeError(error_msg) from create_error
+            else:
+                actual_table_name = row[0]
+                self.log(f"Found existing table: {actual_table_name}")
+
+            cursor.close()
         except Exception as e:
             error_msg = f"Failed to validate or create table: {str(e)}"
             self.status = error_msg
@@ -314,10 +363,10 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
         distance = ds_map.get(self.distance_strategy, DistanceStrategy.COSINE)
 
         oracle_store = OracleVS(
-            client=pool,
+            client=conn,
             table_name=actual_table_name,
             distance_strategy=distance,
-            embedding_function=self._get_embedding_function(),
+            embedding_function=self.embedding,
         )
 
         self.log(f"Created OracleVS instance for table: {actual_table_name}")
@@ -331,13 +380,12 @@ class OracleDatabaseVectorStoreComponent(LCVectorStoreComponent):
                 doc.metadata = self._clean_metadata(doc.metadata)
                 documents.append(doc)
             else:
-                if hasattr(_input, 'metadata'):
+                if hasattr(_input, "metadata"):
                     _input.metadata = self._clean_metadata(_input.metadata)
                 documents.append(_input)
 
         if documents:
             try:
-                documents = self._prepare_documents_for_embedding(documents)
                 self.log(f"Ingesting {len(documents)} documents...")
                 oracle_store.add_documents(documents)
                 success_msg = f"Successfully added {len(documents)} documents"
