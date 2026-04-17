@@ -143,14 +143,14 @@ langflow:
       port:
         value: "5432"
       user:
-        value: "postgres"
+        value: "langflow"
       password:
         valueFrom:
           secretKeyRef:
             name: langflow-secret
             key: POSTGRES_LANGFLOW_PASSWORD
       database:
-        value: "postgres"
+        value: "langflow"
 
     volumes:
       - name: langflow-fss
